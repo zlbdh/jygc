@@ -1,0 +1,41 @@
+change_id: "{{CHANGE_ID}}"
+title: "{{TITLE}}"
+stage: intake
+stage_owner: change-intake-agent
+repo_owners:
+{{REPO_OWNERS}}
+write_scopes:
+  control_repo:
+    owner: change-intake-agent
+    files:
+      - brief.md
+      - impact.yaml
+      - execution.yaml
+      - design.md
+      - acceptance.md
+      - verification/result.md
+      - postmortem.md
+  business_repos:
+{{WRITE_SCOPES}}
+depends_on: []
+branch:
+{{BRANCHES}}
+worktree:
+{{WORKTREES}}
+snapshot_policy:
+{{SNAPSHOT_POLICIES}}
+runtime_type:
+{{RUNTIME_TYPES}}
+registry_ref:
+{{REGISTRY_REFS}}
+worker_result:
+{{WORKER_RESULTS}}
+review_result:
+{{REVIEW_RESULTS}}
+lock_state:
+  control_repo: unlocked
+  business_repos:
+{{LOCK_STATES}}
+snapshot_at: ""
+notes:
+  - "执行期间如果要修改同一文件，必须先更新 owner 与 lock_state。"

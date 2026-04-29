@@ -1,0 +1,10 @@
+change_id: "{{CHANGE_ID}}"
+title: "{{TITLE}}"
+is_cross_repo: true
+affected_repos: []
+affected_interfaces: []
+affected_tables: []
+affected_configs: []
+dependency_order: []
+notes:
+  - ""

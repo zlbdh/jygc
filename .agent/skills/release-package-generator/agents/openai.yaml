@@ -1,0 +1,7 @@
+interface:
+  display_name: "发布单生成"
+  short_description: "汇总发布顺序回滚步骤观察点与风险摘要生成结构化发布单"
+  default_prompt: "Use $release-package-generator to prepare a release package and rollback checklist for a change."
+
+policy:
+  allow_implicit_invocation: true

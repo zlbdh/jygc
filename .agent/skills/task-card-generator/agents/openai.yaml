@@ -1,0 +1,7 @@
+interface:
+  display_name: "任务卡生成"
+  short_description: "按仓拆分任务卡并附上输入输出边界与验证命令供执行使用"
+  default_prompt: "Use $task-card-generator to create repo-level task cards for an approved change."
+
+policy:
+  allow_implicit_invocation: true

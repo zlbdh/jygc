@@ -1,0 +1,70 @@
+mcps:
+  - name: db-schema-readonly
+    status: blueprint
+    environment: dev-or-test
+    access: readonly
+    owner_scope: example-org
+    snapshot_required: true
+    source_stamp_required: true
+    exposes:
+      resources:
+        - schema
+        - tables
+        - indexes
+      tools:
+        - describe_table
+        - list_tables
+    notes:
+      - "仅允许读取开发或测试环境中的表结构和索引信息。"
+  - name: api-contract-readonly
+    status: blueprint
+    environment: dev-or-test
+    access: readonly
+    owner_scope: example-org
+    snapshot_required: true
+    source_stamp_required: true
+    exposes:
+      resources:
+        - openapi
+        - postman
+        - json-schema
+        - samples
+      tools:
+        - get_endpoint_contract
+        - list_contracts
+    notes:
+      - "统一暴露接口契约、样例和版本信息。"
+  - name: config-readonly
+    status: blueprint
+    environment: dev-or-test
+    access: readonly
+    owner_scope: example-org
+    snapshot_required: true
+    source_stamp_required: true
+    exposes:
+      resources:
+        - env-mapping
+        - nacos-config
+      tools:
+        - get_config_key
+        - list_config_groups
+    notes:
+      - "只读查看配置映射，不允许修改或发布配置。"
+  - name: observability-readonly
+    status: blueprint
+    environment: dev-or-test
+    access: readonly
+    owner_scope: example-org
+    snapshot_required: true
+    source_stamp_required: true
+    exposes:
+      resources:
+        - logs
+        - traces
+        - error-summary
+      tools:
+        - search_logs
+        - get_trace
+        - list_recent_errors
+    notes:
+      - "只读查看开发或测试环境的日志、trace 和报错摘要。"

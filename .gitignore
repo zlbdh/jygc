@@ -1,0 +1,29 @@
+# IDE
+.idea/
+.vscode/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Python / Node / Playwright artifacts
+node_modules/
+playwright-report/
+test-results/
+*.log
+
+# Local business repo workspaces live under repos/, but this control repo tracks only repos.yaml
+/repos/*
+!/repos/repos.yaml
+
+# Generated validation reports
+/reports/*
+!/reports/README.md
+!/reports/local-validation/
+!/reports/local-validation/.gitkeep
+
+# Temporary outputs
+tmp/
+temp/
+dist/
+coverage/

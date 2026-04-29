@@ -1,0 +1,7 @@
+interface:
+  display_name: "记忆路由"
+  short_description: "为当前任务选择正确的事实源、读取顺序和写回位置"
+  default_prompt: "Use $memory-router to determine the right memory sources, read order, and write-back targets for the current example-product task."
+
+policy:
+  allow_implicit_invocation: true

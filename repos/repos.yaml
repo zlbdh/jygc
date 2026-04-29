@@ -1,0 +1,136 @@
+repos:
+  - id: backend
+    name: example-product-backend
+    remote: "https://example.com/example-org/example-product-backend.git"
+    local_path: "D:\\workspace\\agent-harness\\repos\\example-product-backend"
+    default_branch: master
+    stack: java-spring-cloud
+    role: backend-service
+    clone_mode: git
+    validation_profile: backend-maven
+    owner_scope: example-org
+    bootstrap_command: "mvn -version"
+    build_command: "mvn -pl services/example-service -am package -DskipTests"
+    test_command: "mvn -pl services/example-service -am test"
+    smoke_command: "mvn -pl services/example-service -am -Dtest=*Test test"
+    safe_check_commands:
+      - "mvn -q -pl services/example-service -am -DskipTests validate"
+      - "mvn -q -pl services/example-service -am test"
+      - "mvn -q -pl services/example-service -am -DskipTests package"
+    status: baseline-ready
+    notes: "基线命令来自现有后端部署副本；真正执行前需先把仓库克隆到 local_path，并按目标微服务调整模块参数。"
+  - id: web-portal
+    name: example-product-web-portal
+    remote: "https://example.com/example-org/example-product-web-portal.git"
+    local_path: "D:\\workspace\\agent-harness\\repos\\example-product-web-portal"
+    default_branch: master
+    stack: vue-vite
+    role: enterprise-web
+    clone_mode: git
+    validation_profile: web-vite
+    owner_scope: example-org
+    bootstrap_command: "npm ci --ignore-scripts"
+    build_command: "npm run build:prod"
+    test_command: "npm run build:prod"
+    smoke_command: "npx playwright test"
+    safe_check_commands:
+      - "npm run build:prod"
+      - "npm run build:stage"
+    status: baseline-ready
+    notes: "当前已知最小命令契约是 build；lint/typecheck 后续补齐。"
+  - id: admin-web
+    name: example-product-admin-web
+    remote: "https://example.com/example-org/example-product-admin-web.git"
+    local_path: "D:\\workspace\\agent-harness\\repos\\example-product-admin-web"
+    default_branch: master
+    stack: vue-vite
+    role: platform-web
+    clone_mode: git
+    validation_profile: web-vite
+    owner_scope: example-org
+    bootstrap_command: "npm ci --ignore-scripts"
+    build_command: "npm run build:prod"
+    test_command: "npm run build:stage"
+    smoke_command: "npx playwright test"
+    safe_check_commands:
+      - "npm run build:prod"
+      - "npm run build:stage"
+    status: baseline-ready
+    notes: "大平台管理端已确认具备标准 Vue/Vite build 脚本，可纳入本地基线。"
+  - id: mobile-a
+    name: example-product-mobile-a
+    remote: "https://example.com/example-org/example-product-mobile-a.git"
+    local_path: "D:\\workspace\\agent-harness\\repos\\example-product-mobile-a"
+    default_branch: main
+    stack: react-native-typescript
+    role: enterprise-mobile
+    clone_mode: git
+    validation_profile: mobile-rn
+    owner_scope: example-org
+    bootstrap_command: "npm ci --ignore-scripts"
+    build_command: "npm run start"
+    test_command: "npm run test -- --watch=false"
+    smoke_command: "maestro test .\\evals\\mobile"
+    safe_check_commands:
+      - "npm run lint"
+      - "npx expo --version"
+    status: baseline-ready
+    notes: "企业端 App 当前本地阶段先以 lint + Expo 环境检查纳入主链路基线；Jest 契约测试仍存在历史接口路径与测试配置债，单列到下一波治理。"
+  - id: mobile-b
+    name: example-product-mobile-b
+    remote: "https://example.com/example-org/example-product-mobile-b.git"
+    local_path: "D:\\workspace\\agent-harness\\repos\\example-product-mobile-b"
+    default_branch: main
+    stack: react-native-typescript
+    role: merchant-mobile
+    clone_mode: git
+    validation_profile: mobile-rn
+    owner_scope: example-org
+    bootstrap_command: "npm ci --ignore-scripts"
+    build_command: "npm run start"
+    test_command: "npm run test -- --watch=false"
+    smoke_command: "maestro test .\\evals\\mobile"
+    safe_check_commands:
+      - "npm run lint"
+      - "npm run test -- --watch=false"
+      - "npx expo --version"
+    status: baseline-ready
+    notes: "商家端 App 已确认具备 lint/test/start 脚本，首版按 React Native + Expo 基线纳入本地验证。"
+  - id: mobile-c
+    name: example-product-mobile-c
+    remote: "https://example.com/example-org/example-product-mobile-c.git"
+    local_path: "D:\\workspace\\agent-harness\\repos\\example-product-mobile-c"
+    default_branch: main
+    stack: react-native-typescript
+    role: staff-mobile
+    clone_mode: git
+    validation_profile: mobile-rn
+    owner_scope: example-org
+    bootstrap_command: "npm install --ignore-scripts"
+    build_command: "npm install"
+    test_command: "npm run typecheck"
+    smoke_command: "maestro test .\\evals\\mobile"
+    safe_check_commands:
+      - "npm run typecheck"
+      - "npx expo --version"
+    status: missing-contract
+    notes: "当前仓只有需求文档和 README，尚未形成可执行 App 工程，暂不纳入命令级基线。"
+  - id: miniapp
+    name: example-product-miniapp
+    remote: "https://example.com/example-org/example-product-miniapp.git"
+    local_path: "D:\\workspace\\agent-harness\\repos\\example-product-miniapp"
+    default_branch: main
+    stack: miniapp-typescript
+    role: consumer-miniapp
+    clone_mode: git
+    validation_profile: miniapp
+    owner_scope: example-org
+    bootstrap_command: "npm install --ignore-scripts"
+    build_command: "npm run build"
+    test_command: "npm run lint"
+    smoke_command: "微信开发者工具导入检查"
+    safe_check_commands:
+      - "npm run build"
+      - "npm run lint"
+    status: missing-contract
+    notes: "当前仓以页面原型和技能脚手架为主，尚未形成标准小程序工程契约。"

@@ -1,0 +1,7 @@
+interface:
+  display_name: "本地基线诊断"
+  short_description: "读取本地基线报告并归纳问题根因与优先修复顺序供治理使用"
+  default_prompt: "Use $local-baseline-triage to interpret local baseline reports and recommend next actions."
+
+policy:
+  allow_implicit_invocation: true

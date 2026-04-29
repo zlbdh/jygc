@@ -1,0 +1,49 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "YuanGatheredNeighborsReviewResponse",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "status",
+    "summary",
+    "scope_check",
+    "task_alignment",
+    "verification_check",
+    "needs_rework",
+    "findings",
+    "next_action"
+  ],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": ["approved", "needs_rework", "blocked"]
+    },
+    "summary": {
+      "type": "string"
+    },
+    "scope_check": {
+      "type": "string",
+      "enum": ["pass", "fail", "unknown"]
+    },
+    "task_alignment": {
+      "type": "string",
+      "enum": ["pass", "fail", "unknown"]
+    },
+    "verification_check": {
+      "type": "string",
+      "enum": ["pass", "fail", "unknown"]
+    },
+    "needs_rework": {
+      "type": "boolean"
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "next_action": {
+      "type": "string"
+    }
+  }
+}

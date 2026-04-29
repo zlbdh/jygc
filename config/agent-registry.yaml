@@ -1,0 +1,229 @@
+version: 1
+review_role: verification-agent
+roles:
+  - id: change-intake-agent
+    class: governance
+    target_repo: control
+    runtime_type: main-agent
+    default_workflow: change-intake-workflow
+    default_skills:
+      - change-intake
+      - memory-router
+      - rule-resolver
+    allowed_paths:
+      - changes/**
+      - docs/**
+      - templates/**
+    required_inputs:
+      - repos/repos.yaml
+      - docs/workflow.md
+      - templates/change-brief.md
+    verify_commands: []
+  - id: impact-design-agent
+    class: governance
+    target_repo: control
+    runtime_type: main-agent
+    default_workflow: impact-design-workflow
+    default_skills:
+      - cross-repo-impact
+      - task-card-generator
+      - memory-router
+      - rule-resolver
+    allowed_paths:
+      - changes/**
+      - docs/**
+      - templates/**
+    required_inputs:
+      - brief.md
+      - impact.yaml
+      - execution.yaml
+    verify_commands: []
+  - id: verification-agent
+    class: governance
+    target_repo: control
+    runtime_type: worker
+    default_workflow: cross-repo-acceptance-workflow
+    default_skills:
+      - cross-repo-acceptance-recorder
+      - local-baseline-triage
+      - rule-resolver
+    allowed_paths:
+      - changes/**
+      - reports/**
+    required_inputs:
+      - acceptance.md
+      - verification/result.md
+      - reports/local-validation/*
+    verify_commands: []
+  - id: release-agent
+    class: governance
+    target_repo: control
+    runtime_type: worker
+    default_workflow: release-governance-workflow
+    default_skills:
+      - release-package-generator
+      - rule-resolver
+    allowed_paths:
+      - changes/**
+      - release/**
+    required_inputs:
+      - verification/result.md
+      - templates/release-note.md
+    verify_commands: []
+  - id: knowledge-agent
+    class: governance
+    target_repo: control
+    runtime_type: worker
+    default_workflow: knowledge-feedback-workflow
+    default_skills:
+      - postmortem-to-regression
+      - memory-router
+      - rule-resolver
+    allowed_paths:
+      - changes/**
+      - docs/**
+      - evals/**
+    required_inputs:
+      - postmortem.md
+      - verification/result.md
+    verify_commands: []
+  - id: backend-exec-agent
+    class: repo-executor
+    target_repo: backend
+    runtime_type: worker
+    default_workflow: repo-execution-workflow
+    default_skills:
+      - memory-router
+      - rule-resolver
+      - local-baseline-triage
+    allowed_paths:
+      - shared-common/**
+      - services/**
+      - sql/**
+    required_inputs:
+      - brief.md
+      - impact.yaml
+      - execution.yaml
+      - tasks/backend.md
+    verify_commands:
+      - mvn test
+      - mvn package -DskipTests
+  - id: web-exec-agent
+    class: repo-executor
+    target_repo: web-portal
+    runtime_type: worker
+    default_workflow: repo-execution-workflow
+    default_skills:
+      - memory-router
+      - rule-resolver
+      - local-baseline-triage
+    allowed_paths:
+      - src/**
+      - public/**
+      - package.json
+      - vite.config.*
+    required_inputs:
+      - brief.md
+      - impact.yaml
+      - execution.yaml
+      - tasks/web-portal.md
+    verify_commands:
+      - npm run build:prod
+  - id: admin-web-exec-agent
+    class: repo-executor
+    target_repo: admin-web
+    runtime_type: worker
+    default_workflow: repo-execution-workflow
+    default_skills:
+      - memory-router
+      - rule-resolver
+      - local-baseline-triage
+    allowed_paths:
+      - src/**
+      - public/**
+      - package.json
+      - vite.config.*
+    required_inputs:
+      - brief.md
+      - impact.yaml
+      - execution.yaml
+      - tasks/admin-web.md
+    verify_commands:
+      - npm run build:prod
+  - id: mobile-a-exec-agent
+    class: repo-executor
+    target_repo: mobile-a
+    runtime_type: worker
+    default_workflow: repo-execution-workflow
+    default_skills:
+      - memory-router
+      - rule-resolver
+      - local-baseline-triage
+    allowed_paths:
+      - src/**
+      - App.tsx
+      - package.json
+    required_inputs:
+      - brief.md
+      - impact.yaml
+      - execution.yaml
+      - tasks/mobile-a.md
+    verify_commands:
+      - npm run lint
+      - npx expo --version
+  - id: mobile-b-exec-agent
+    class: repo-executor
+    target_repo: mobile-b
+    runtime_type: worker
+    default_workflow: repo-execution-workflow
+    default_skills:
+      - memory-router
+      - rule-resolver
+      - local-baseline-triage
+    allowed_paths:
+      - src/**
+      - App.tsx
+      - package.json
+    required_inputs:
+      - brief.md
+      - impact.yaml
+      - execution.yaml
+      - tasks/mobile-b.md
+    verify_commands:
+      - npm run lint
+      - npm run test -- --watch=false
+  - id: mobile-c-planning-agent
+    class: planning
+    target_repo: mobile-c
+    runtime_type: worker
+    default_workflow: repo-execution-workflow
+    default_skills:
+      - memory-router
+      - rule-resolver
+    allowed_paths:
+      - docx/**
+      - README.md
+    required_inputs:
+      - brief.md
+      - impact.yaml
+      - execution.yaml
+      - tasks/mobile-c.md
+    verify_commands: []
+  - id: miniapp-planning-agent
+    class: planning
+    target_repo: miniapp
+    runtime_type: worker
+    default_workflow: repo-execution-workflow
+    default_skills:
+      - memory-router
+      - rule-resolver
+    allowed_paths:
+      - pages/**
+      - docx/**
+      - README.md
+    required_inputs:
+      - brief.md
+      - impact.yaml
+      - execution.yaml
+      - tasks/miniapp.md
+    verify_commands: []

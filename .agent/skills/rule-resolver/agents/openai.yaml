@@ -1,0 +1,7 @@
+interface:
+  display_name: "规则解析"
+  short_description: "解析当前任务的规则优先级、冲突点和待确认项"
+  default_prompt: "Use $rule-resolver to identify applicable rules, precedence, and conflicts for the current example-product task."
+
+policy:
+  allow_implicit_invocation: true

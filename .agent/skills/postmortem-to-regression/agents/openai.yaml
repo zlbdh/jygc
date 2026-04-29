@@ -1,0 +1,7 @@
+interface:
+  display_name: "复盘回灌"
+  short_description: "把复盘结论转成规则、回归、模板和 skill 改进项"
+  default_prompt: "Use $postmortem-to-regression to turn a example-product incident or postmortem into concrete regression and governance updates."
+
+policy:
+  allow_implicit_invocation: true
