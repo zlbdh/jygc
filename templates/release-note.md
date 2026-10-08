@@ -1,46 +1,46 @@
-# 发布单 - {{CHANGE_ID}}
+# Release record - {{CHANGE_ID}}
 
-## 发布概览
+## Release overview
 
-- 发布编号：
-- 关联变更：
-- 发布负责人：
-- 发布时间：
-- 发布目标环境：
+- Release ID:
+- Related changes:
+- Release owner:
+- Release time:
+- Target release environment:
 
-## 涉及仓库
+## Affected repositories
 
-- 
+-
 
-## 数据库 / 配置变更
+## Database / configuration changes
 
-- 
+-
 
-## 验收与验证依据
+## Acceptance and verification evidence
 
-- 控制仓验收记录：
-- 本仓验证记录：
-- 外部上下文来源：
-- 证据快照时间：
+- Control-repository acceptance record:
+- Repository verification record:
+- External context source:
+- Evidence snapshot time:
 
-## 发布顺序
+## Release order
 
-1. 
-2. 
-3. 
+1.
+2.
+3.
 
-## 回滚步骤
+## Rollback steps
 
-1. 
-2. 
-3. 
+1.
+2.
+3.
 
-## 发布后观察点
+## Post-release monitoring points
 
-- 
+-
 
-## 审查结论
+## Review conclusion
 
-- [ ] 可以发布
-- [ ] 有条件发布
-- [ ] 暂不发布
+- [ ] Ready to release
+- [ ] Conditional release
+- [ ] Do not release yet

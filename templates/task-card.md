@@ -1,43 +1,43 @@
-# {{CHANGE_ID}} / {{REPO_ID}} 任务卡
+# {{CHANGE_ID}} / {{REPO_ID}} Task card
 
-## 仓库信息
+## Repository information
 
-- 仓库：`{{REPO_NAME}}`
-- 仓库 ID：`{{REPO_ID}}`
-- 技术栈：`{{STACK}}`
-- 默认执行 Agent：`{{DEFAULT_OWNER}}`
+- Repository: `{{REPO_NAME}}`
+- Repository ID: `{{REPO_ID}}`
+- Technology stack: `{{STACK}}`
+- Default execution agent: `{{DEFAULT_OWNER}}`
 
-## 执行状态引用
+## Execution status references
 
-- 分支：在 `execution.yaml` 中登记
-- worktree：在 `execution.yaml` 中登记
-- 锁状态：在 `execution.yaml` 中登记
-- 真实写代码任务必须使用独立且干净的 worktree，不得直接在主仓脏工作树执行
+- Branch: register in `execution.yaml`
+- Worktree: register in `execution.yaml`
+- Lock state: register in `execution.yaml`
+- Actual code-editing tasks require an isolated, clean worktree. Do not execute directly in the main repository's dirty working tree.
 
-## 输入
+## Inputs
 
-- 
+-
 
-## 输出
+## Outputs
 
-- 
+-
 
-## 改动边界
+## Change boundaries
 
-- 
+-
 
-## 禁止改动项
+## Prohibited changes
 
-- 
+-
 
-## 本仓验证命令
+## Repository verification commands
 
-- 构建：
-- 测试：
-- Smoke：
+- Build:
+- Test:
+- Smoke:
 
-## 回填要求
+## Writeback requirements
 
-- repo worker 只回填 `verification/workers/{{REPO_ID}}.md`
-- 不直接修改 `verification/result.md`
-- 主验证结论由 `verification-agent` 汇总写入 `verification/result.md`
+- Repository workers write back only to `verification/workers/{{REPO_ID}}.md`
+- Do not directly modify `verification/result.md`
+- verification-agent consolidates the primary verification conclusion in `verification/result.md`

@@ -1,6 +1,6 @@
 interface:
-  display_name: "任务卡生成"
-  short_description: "按仓拆分任务卡并附上输入输出边界与验证命令供执行使用"
+  display_name: "Task card generation"
+  short_description: "Create repository task cards with boundaries and checks"
   default_prompt: "Use $task-card-generator to create repo-level task cards for an approved change."
 
 policy:

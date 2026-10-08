@@ -1,28 +1,28 @@
-# 分支与 PR 规范
+# Branch and PR Conventions
 
-## 1. 控制仓分支命名
+## 1. Control-repository branch naming
 
-控制仓分支统一使用：
+Use this format for control-repository branches:
 
 ```text
 codex/<change-id>-<topic>
 ```
 
-示例：
+Example:
 
 ```text
 codex/CHG-2026-0001-bootstrap-harness
 ```
 
-## 2. 业务仓分支命名
+## 2. Business-repository branch naming
 
-业务仓分支统一使用：
+Use this format for business-repository branches:
 
 ```text
 codex/<change-id>-<repo>-<topic>
 ```
 
-示例：
+Examples:
 
 ```text
 codex/CHG-2026-0102-hd-order-routing
@@ -30,46 +30,44 @@ codex/CHG-2026-0102-admin-web-enterprise-review
 codex/CHG-2026-0102-mobile-a-todo-sync
 ```
 
-## 3. PR 标题规范
+## 3. PR title format
 
-业务仓 PR 标题统一格式：
-
-```text
-[<change-id>][<repo>] <简短说明>
-```
-
-示例：
+Use this format for business-repository PR titles:
 
 ```text
-[CHG-2026-0102][backend] 新增平台订单路由状态同步接口
+[<change-id>][<repo>] <short description>
 ```
 
-## 4. Commit message 建议
-
-建议格式：
+Example:
 
 ```text
-<type>(<repo>): <说明> [<change-id>]
+[CHG-2026-0102][backend] Add platform order-routing state synchronization API
 ```
 
-示例：
+## 4. Recommended commit message format
 
 ```text
-feat(backend): 补充平台订单路由回传逻辑 [CHG-2026-0102]
-docs(harness): 初始化控制仓骨架 [CHG-2026-0001]
+<type>(<repo>): <description> [<change-id>]
 ```
 
-## 5. 变更单引用规则
+Examples:
 
-- 每个业务仓 PR 必须在描述里引用 `change-id`
-- 必须附上控制仓中的任务卡路径
-- 跨仓需求的所有 PR 最终都要回填到发布单
+```text
+feat(backend): add platform order-routing response logic [CHG-2026-0102]
+docs(harness): initialize control-repository scaffolding [CHG-2026-0001]
+```
 
-## 6. 合并前检查
+## 5. Change record references
 
-PR 在进入人工审查前，至少要满足：
+- Every business-repository PR must reference its `change-id` in the description.
+- Include the task-card path in the control repository.
+- Record all PRs for a cross-repository request in the release record.
 
-- 对应任务卡已存在
-- 关联 `change-id` 已写入 PR
-- 本仓最小验证结果已记录
-- 跨仓风险已回填到控制仓
+## 6. Pre-merge checks
+
+A PR must meet at least these conditions before human review:
+
+- Its task card exists.
+- Its `change-id` is included in the PR.
+- Minimum repository verification results are recorded.
+- Cross-repository risks are recorded in the control repository.

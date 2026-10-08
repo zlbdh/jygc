@@ -1,122 +1,122 @@
-# 示例产品中的 Harness Engineering
+# Harness Engineering in the Example Product
 
-## 1. 什么是驾驭工程
+## 1. What harness engineering means
 
-在示例产品项目里，`Harness engineering` 不是单纯“多写约束”，而是给 7 个业务仓搭一个统一的**控制平面**，让需求、开发、验证、发布和复盘都在同一套规则下运行。
+For the example product, harness engineering establishes a unified **control plane** for seven business repositories. Requirements, development, verification, releases, and postmortems operate under shared rules.
 
-它的核心目标是 4 件事：
+Its four core goals are:
 
-- 可控：知道需求从哪里进入、任务拆给谁、代码在哪改
-- 可验证：知道哪些检查跑过、哪些链路验过、哪些风险还没关
-- 可审计：知道谁改了什么、为什么能发、出了问题怎么回放
-- 可回灌：知道问题如何沉淀回模板、规则、skills 和回归集
+- Control: know where requests enter, who receives each task, and where code changes happen.
+- Verification: know which checks ran, which workflows were verified, and which risks remain open.
+- Auditability: know who changed what, why a release is allowed, and how to reconstruct a failure.
+- Feedback: turn problems into improvements to templates, rules, skills, and regression coverage.
 
-## 2. 在示例产品里它具体指什么
+## 2. What it covers in the example product
 
-控制平面要覆盖以下四层：
+The control plane covers the following layers.
 
-### 2.1 知识层
+### 2.1 Knowledge layer
 
 - `docs/`
 - `standards/`
 - `templates/`
 - `changes/`
 
-职责：把需求背景、流程规则、验收标准和历史经验变成仓库里的事实源。
+Responsibility: turn requirement context, workflow rules, acceptance criteria, and past experience into repository sources of truth.
 
-### 2.2 执行层
+### 2.2 Execution layer
 
 - `repos/repos.yaml`
 - `execution.yaml`
-- 任务卡
-- 业务仓分工
-- 控制仓级 skills
+- Task cards
+- Division of work across business repositories
+- Control-repository skills
 
-职责：让人和 Agent 都按同一套结构化输入执行。
+Responsibility: have people and agents execute from the same structured inputs.
 
-### 2.3 验证层
+### 2.3 Verification layer
 
-- 本地基线
-- 契约发现
-- 仓内最小命令契约
-- 跨仓验收
+- Local baselines
+- Contract discovery
+- Minimum command contracts within repositories
+- Cross-repository acceptance
 
-职责：把“感觉没问题”替换成“有证据可查”。
+Responsibility: provide inspectable evidence for correctness.
 
-### 2.4 发布治理层
+### 2.4 Release governance layer
 
-- 发布单
-- 回滚说明
-- 发布后观察点
-- 复盘记录
+- Release records
+- Rollback instructions
+- Post-release monitoring points
+- Postmortem records
 
-职责：把上线从代码合并动作升级成受控交付动作。
+Responsibility: make deployment a controlled delivery process beyond merely merging code.
 
-### 2.5 记忆与规则层
+### 2.5 Memory and rule layer
 
 - `docs/memory-governance.md`
 - `docs/rule-precedence.md`
 - `docs/cross-repo/`
 
-职责：明确什么是长期记忆、谁是事实源、规则冲突时谁优先，以及跨仓长期知识放在哪里。
+Responsibility: define long-term memory, sources of truth, rule precedence, and where long-term cross-repository knowledge belongs.
 
-## 3. 当前项目现状
+## 3. Current project status
 
-### 3.1 已经具备的能力
+### 3.1 Existing capabilities
 
-- 控制仓已建立，并已成为 7 仓统一工作区入口
-- 7 仓本地副本已落到 `D:\workspace\agent-harness\repos\`
-- `clone / sync / discover / baseline` 工作流已跑通
-- 变更单、任务卡、验收单、发布单已具备模板和脚本入口
+- The control repository is established as the unified workspace entry point for all seven repositories.
+- Local copies of all seven repositories are under `D:\workspace\agent-harness\repos\`.
+- The `clone / sync / discover / baseline` workflow has run successfully.
+- Change records, task cards, acceptance records, and release records have templates and script entry points.
 
-### 3.2 当前成熟度判断
+### 3.2 Current maturity assessment
 
-- `web-portal`、`admin-web`：已经进入本地基线绿灯
-- `backend`、`mobile-a`、`mobile-b`：可执行，但仍有真实质量问题待修
-- `mobile-c`、`miniapp`：还不是标准可执行工程
-- 控制仓：知识层和本地验证层已建立，跨仓验收层与发布治理层未闭环
+- `web-portal`, `admin-web`: local baselines pass.
+- `backend`, `mobile-a`, `mobile-b`: executable, with real quality issues still to address.
+- `mobile-c`, `miniapp`: not yet standard executable projects.
+- Control repository: knowledge and local verification layers are established; cross-repository acceptance and release governance are not yet complete.
 
-### 3.3 当前最新阶段判断
+### 3.3 Latest stage assessment
 
-- 本地 Harness Engineering 已验证成功
-- 控制面已经成熟：控制仓、变更单、基线链、角色注册表、dispatcher、worker/review packet 都已落地
-- 单仓 no-hand-code 已“有条件成功”，但还未达到“纯 no-hand-code 无条件成功”
-- `CHG-2026-0004-mobile-login-safearea-nohandcode` 已证明：
-  - repo worker 能在独立 worktree 中真实改代码
-  - `source_dirty_tracked` 已解决“worktree 基线落后于主仓本地基线”的问题
-  - 当前新的主阻断已经不是快照设计，而是外部 `codex exec` usage limit / runtime 资源限制
-- 因此当前最准确的判断不是“还在搭方案”，而是：
-  - 控制面成功
-  - 运行面已接上
-  - 但仍处于本地 V1 演进期
+- Local harness engineering has been verified successfully.
+- The control plane is mature: the control repository, change records, baseline workflow, role registry, dispatcher, and worker/review packets are implemented.
+- Single-repository no-hand-code execution has achieved conditional success, but not unconditional success with a purely no-hand-code process.
+- `CHG-2026-0004-mobile-login-safearea-nohandcode` demonstrated that:
+  - A repository worker can make actual code changes in an isolated worktree.
+  - `source_dirty_tracked` resolves worktree baselines lagging behind the main repository's local baseline.
+  - The primary blocker is now external `codex exec` usage limits / runtime resources, rather than snapshot design.
+- The current assessment is therefore:
+  - The control plane works.
+  - The execution runtime is connected.
+  - The system is still evolving through local V1.
 
-## 4. 当前阶段的目标
+## 4. Goals at this stage
 
-当前阶段不追求“一次性全自动 AI 开发”，而是先把系统搭成：
+The immediate goal is a system for:
 
-- 可控开发
-- 可重复验证
-- 可审计发布
+- Controlled development
+- Repeatable verification
+- Auditable releases
 
-判断标准不是“文档很多”，而是：
+Fully automated AI development in a single step is outside the current target. Success is measured by whether:
 
-- 新需求能从控制仓进入
-- 业务仓能按任务卡执行
-- 本地基线和跨仓验收能挡住明显风险
-- 发布前有结构化证据
+- New requests enter through the control repository.
+- Business repositories execute from task cards.
+- Local baselines and cross-repository acceptance block obvious risks.
+- Structured evidence exists before release.
 
-当前阶段的更具体目标已经收敛为：
+The more specific current goals are:
 
-- 先把 `mobile-a` 的第一条单仓 no-hand-code 样板真正跑成
-- 不先做多仓并行
-- 不先接 live MCP
-- 不先做远端提交或上线准备
-- 只有当 `CHG-2026-0004` 在 `source_dirty_tracked` worktree 上无阻断通过后，才进入第二条 `mobile-a` 单仓任务，再扩到多仓
+- First complete the initial single-repository no-hand-code example for `mobile-a`.
+- Do not start with parallel execution across repositories.
+- Do not integrate live MCP first.
+- Do not start with remote commits or deployment preparation.
+- Only after `CHG-2026-0004` passes without blockers on its `source_dirty_tracked` worktree should work proceed to a second `mobile-a` task, then expand to multiple repositories.
 
-## 5. 现在为什么要这么做
+## 5. Why this is needed now
 
-- 当前项目是多仓联动，不再适合靠口头同步
-- 当前已有真实质量问题，如果没有统一门禁，很难区分历史问题和新问题
-- 当前已有业务仓级 rules 和 skills，但分散在仓内，尚未提升为控制平面能力
-- 当前没有 MCP 资源，意味着上下文仍依赖本地文件和终端，更需要控制仓把事实组织起来
-- 当前开始引入 `execution.yaml`，就是为了解决并发执行时“谁在写、写哪里、基于哪个快照”的问题
+- The project now requires coordination across repositories, beyond verbal synchronization.
+- Existing quality issues require shared gates to distinguish old problems from new ones.
+- Business-repository rules and skills exist but remain scattered rather than organized into control-plane capabilities.
+- No MCP resources are currently available, so context still depends on local files and terminal output; organizing facts in the control repository is particularly important.
+- `execution.yaml` addresses concurrent execution questions: who is writing, where they are writing, and which snapshot they are using.

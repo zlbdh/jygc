@@ -1,0 +1,33 @@
+change_id: CHG-2026-0010-american-english
+title: American English localization
+stage: ready-for-review
+stage_owner: verification-agent
+repo_owners:
+  control_repo: localization-agent
+write_scopes:
+  control_repo:
+    owner: localization-agent
+    files: [AGENTS.md, README.md, PUBLICATION_NOTES.md, .agent, docs, standards, templates, scripts, config, repos, mcp, evals, changes, release, reports]
+  business_repos: {}
+depends_on: []
+branch:
+  control_repo: main
+worktree:
+  control_repo: /workspace/scratch/ba1e388c7eb2/repos/jygc
+snapshot_policy:
+  control_repo: clean_clone
+runtime_type:
+  control_repo: main-agent
+registry_ref:
+  control_repo: config/agent-registry.yaml#verification-agent
+worker_result:
+  control_repo: verification/result.md
+review_result:
+  control_repo: verification/result.md
+lock_state:
+  control_repo: unlocked
+  business_repos: {}
+snapshot_at: '2026-10-08'
+notes:
+  - Dedicated clean clone at 73749709f4ac31b0ffae024c3bd8faddbb2f9b83.
+  - One writer; no concurrent mutation of this repository.

@@ -60,7 +60,8 @@ function Test-HarnessEnvironmentLimitedFailure {
         return $false
     }
 
-    return $Text -match 'LocalRepositoryNotAccessibleException|Could not create local repository|spawn EPERM|blocked by policy|sandbox|权限限制|受环境限制|当前环境.*阻止|无法执行'
+    # Match English diagnostics and retain legacy Chinese diagnostics from external tools.
+    return $Text -match 'environment restrictions|not installed locally|LocalRepositoryNotAccessibleException|Could not create local repository|spawn EPERM|blocked by policy|sandbox|权限限制|受环境限制|当前环境.*阻止|无法执行'
 }
 
 $validateReposScript = Join-Path (Get-HarnessRepoRoot) 'scripts\checks\validate-repos.ps1'
@@ -104,15 +105,15 @@ foreach ($repo in $repos) {
     if (-not $localExists) {
         $l1Status = 'FAIL'
         $l2Status = 'SKIP'
-        $findings.Add('本地仓库未克隆。')
-        $blockers.Add("$($repo.id)：未克隆到本地。")
-        $recommendations.Add("$($repo.id)：先执行 scripts/bootstrap/clone-repos.ps1 拉齐仓库。")
+        $findings.Add('The repository has not been cloned locally.')
+        $blockers.Add("$($repo.id): Not cloned locally.")
+        $recommendations.Add("$($repo.id): Run scripts/bootstrap/clone-repos.ps1 to synchronize repositories first.")
     } elseif (-not $gitExists) {
         $l1Status = 'FAIL'
         $l2Status = 'SKIP'
-        $findings.Add('目录存在但不是 git 仓库。')
-        $blockers.Add("$($repo.id)：目录存在但不是 git 仓库。")
-        $recommendations.Add("$($repo.id)：清理异常目录后重新克隆标准仓库。")
+        $findings.Add('The directory exists but is not a Git repository.')
+        $blockers.Add("$($repo.id): The directory exists but is not a Git repository.")
+        $recommendations.Add("$($repo.id): Resolve the invalid directory, then clone the standard repository again.")
     } else {
         $remoteUrl = Get-HarnessGitOriginUrl -RepoPath $repoPath
         $remoteOk = (Normalize-HarnessText $remoteUrl) -eq (Normalize-HarnessText $repo.remote)
@@ -123,29 +124,29 @@ foreach ($repo in $repos) {
 
         if (-not $remoteOk) {
             $l1Status = 'WARN'
-            $findings.Add('origin 远端与 repos.yaml 不一致。')
-            $recommendations.Add("$($repo.id)：修正 origin 远端地址。")
+            $findings.Add('The origin remote differs from repos.yaml.')
+            $recommendations.Add("$($repo.id): Correct the origin remote URL.")
         }
 
         if (-not $branchOk) {
             $l1Status = 'WARN'
-            $findings.Add("默认分支 $($repo.default_branch) 未在本地或 origin 中发现。")
-            $recommendations.Add("$($repo.id)：校正 repos.yaml 中的 default_branch 或同步远端默认分支。")
+            $findings.Add("Default branch $($repo.default_branch) was not found locally or in origin.")
+            $recommendations.Add("$($repo.id): Correct default_branch in repos.yaml or synchronize the remote default branch.")
         }
 
         if (-not $manifestOk) {
             $l1Status = 'FAIL'
-            $findings.Add('缺少关键 manifest，无法进入安全自检。')
-            $blockers.Add("$($repo.id)：关键 manifest 缺失。")
-            $recommendations.Add("$($repo.id)：先补齐工程入口和关键 manifest，再进入 L2 安全自检。")
+            $findings.Add('A required manifest is missing; safe self-checks cannot start.')
+            $blockers.Add("$($repo.id): A required manifest is missing.")
+            $recommendations.Add("$($repo.id): Add the project entry point and required manifests before starting L2 safe self-checks.")
         }
 
         if ($dirty) {
             if ($l1Status -eq 'PASS') {
                 $l1Status = 'WARN'
             }
-            $findings.Add('工作区非干净状态。')
-            $recommendations.Add("$($repo.id)：清理工作区改动后再重跑本地基线。")
+            $findings.Add('The workspace has uncommitted changes.')
+            $recommendations.Add("$($repo.id): Resolve workspace changes before rerunning the local baseline.")
         }
     }
 
@@ -154,14 +155,14 @@ foreach ($repo in $repos) {
             'backend-maven' {
                 if (-not $toolAvailability.mvn) {
                     $envOk = $false
-                    $findings.Add('本机缺少 mvn。')
+                    $findings.Add('mvn is not installed locally.')
                 }
             }
             'web-vite' {
                 foreach ($tool in @('node', 'npm', 'npx')) {
                     if (-not $toolAvailability[$tool]) {
                         $envOk = $false
-                        $findings.Add("本机缺少 $tool。")
+                        $findings.Add("$tool is not installed locally.")
                     }
                 }
             }
@@ -169,7 +170,7 @@ foreach ($repo in $repos) {
                 foreach ($tool in @('node', 'npm', 'npx')) {
                     if (-not $toolAvailability[$tool]) {
                         $envOk = $false
-                        $findings.Add("本机缺少 $tool。")
+                        $findings.Add("$tool is not installed locally.")
                     }
                 }
             }
@@ -177,7 +178,7 @@ foreach ($repo in $repos) {
                 foreach ($tool in @('node', 'npm')) {
                     if (-not $toolAvailability[$tool]) {
                         $envOk = $false
-                        $findings.Add("本机缺少 $tool。")
+                        $findings.Add("$tool is not installed locally.")
                     }
                 }
             }
@@ -189,7 +190,7 @@ foreach ($repo in $repos) {
             $l2Status = 'WARN'
         }
         if ([string]$repo.status -eq 'baseline-ready') {
-            $recommendations.Add("$($repo.id)：补齐本地运行环境后再执行基线命令。")
+            $recommendations.Add("$($repo.id): Set up the local runtime before running baseline commands.")
         }
     }
 
@@ -200,11 +201,11 @@ foreach ($repo in $repos) {
             if ($l2Status -eq 'PASS') {
                 $l2Status = 'WARN'
             }
-            $findings.Add("当前仓配置状态为 $($repo.status)，以发现和清单为主，暂不作为可发布前置验证依据。")
+            $findings.Add("The configured repository status is $($repo.status). Use it for discovery and inventory only, not as pre-release verification evidence yet.")
             if ($contract.suggested_status -eq 'missing-local-env') {
-                $recommendations.Add("$($repo.id)：先补齐本地依赖环境，再纳入发布前置验证。")
+                $recommendations.Add("$($repo.id): Install local dependencies before including this repository in pre-release verification.")
             } else {
-                $recommendations.Add("$($repo.id)：先补齐命令契约和工程脚手架，再纳入发布前置验证。")
+                $recommendations.Add("$($repo.id): Complete the command contract and project scaffolding before including this repository in pre-release verification.")
             }
         } elseif (-not $SkipCommandExecution -and $envOk) {
             $bootstrapCommand = [string]$repo.bootstrap_command
@@ -218,12 +219,12 @@ foreach ($repo in $repos) {
                 if ($bootstrapResult.ExitCode -ne 0) {
                     if (Test-HarnessEnvironmentLimitedFailure -Text $bootstrapResult.Output) {
                         $l2Status = 'BLOCKED'
-                        $findings.Add("环境受限，无法执行 bootstrap_command：$bootstrapCommand")
-                        $recommendations.Add("$($repo.id)：在允许访问本地依赖与子进程的环境中重跑 bootstrap_command。")
+                        $findings.Add("Environment restrictions prevent execution of bootstrap_command: $bootstrapCommand")
+                        $recommendations.Add("$($repo.id): Rerun bootstrap_command in an environment that allows local dependencies and subprocesses.")
                     } else {
                         $l2Status = 'FAIL'
-                        $findings.Add("bootstrap_command 执行失败：$bootstrapCommand")
-                        $recommendations.Add("$($repo.id)：修复 bootstrap_command 后再重跑 L2。")
+                        $findings.Add("bootstrap_command failed: $bootstrapCommand")
+                        $recommendations.Add("$($repo.id): Fix bootstrap_command before rerunning L2.")
                     }
                     $findings.Add($bootstrapResult.Output)
                 }
@@ -245,12 +246,12 @@ foreach ($repo in $repos) {
                     if ($result.ExitCode -ne 0) {
                         if (Test-HarnessEnvironmentLimitedFailure -Text $result.Output) {
                             $l2Status = 'BLOCKED'
-                            $findings.Add("环境受限，无法完成安全检查：$command")
-                            $recommendations.Add("$($repo.id)：在允许访问本地依赖与子进程的环境中重跑安全检查。")
+                            $findings.Add("Environment restrictions prevent completion of the safe check: $command")
+                            $recommendations.Add("$($repo.id): Rerun safe checks in an environment that allows local dependencies and subprocesses.")
                         } else {
                             $l2Status = 'FAIL'
-                            $findings.Add("安全检查失败：$command")
-                            $recommendations.Add("$($repo.id)：修复失败的安全检查命令后再恢复为发布前置绿灯。")
+                            $findings.Add("Safe check failed: $command")
+                            $recommendations.Add("$($repo.id): Fix failing safe-check commands before restoring a passing pre-release status.")
                         }
                         if (-not [string]::IsNullOrWhiteSpace($result.Output)) {
                             $findings.Add($result.Output)
@@ -262,7 +263,7 @@ foreach ($repo in $repos) {
         } else {
             if ($SkipCommandExecution -and $l2Status -eq 'PASS') {
                 $l2Status = 'WARN'
-                $findings.Add('本次跳过了实际命令执行，仅完成结构检查。')
+                $findings.Add('Actual command execution was skipped; only structural checks were completed.')
             }
         }
     }
@@ -307,11 +308,11 @@ $summaryPath = Join-Path $reportDir ($timestamp + '-summary.md')
 $matrixPath = Join-Path $reportDir ($timestamp + '-matrix.json')
 
 $summaryLines = @(
-    '# 本地基线验证报告',
+    '# Local baseline verification report',
     '',
-    "生成时间：$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')",
+    "Generated at: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')",
     '',
-    '## 工具可用性',
+    '## Tool availability',
     ''
 )
 
@@ -320,9 +321,9 @@ foreach ($tool in $toolAvailability.Keys) {
 }
 
 $summaryLines += ''
-$summaryLines += '## 仓库矩阵'
+$summaryLines += '## Repository matrix'
 $summaryLines += ''
-$summaryLines += '| 仓库 | L1 | L2 | 总体 | 配置状态 | 契约发现 | 关键发现 |'
+$summaryLines += '| Repository | L1 | L2 | Overall | Configured status | Contract discovery | Key findings |'
 $summaryLines += '|------|----|----|------|----------|----------|----------|'
 
 foreach ($item in $matrix) {
@@ -337,15 +338,15 @@ foreach ($item in $matrix) {
         }
     }
 
-    $findingText = if ($findingParts.Count -gt 0) { ($findingParts -join '；') } else { '无' }
+    $findingText = if ($findingParts.Count -gt 0) { ($findingParts -join '; ') } else { 'None' }
     $summaryLines += "| $($item.id) | $($item.l1_status) | $($item.l2_status) | $($item.overall_status) | $($item.configured_status) | $($item.contract_status) | $findingText |"
 }
 
 $summaryLines += ''
-$summaryLines += '## 阻断项'
+$summaryLines += '## Blockers'
 $summaryLines += ''
 if ($blockers.Count -eq 0) {
-    $summaryLines += '- 无'
+    $summaryLines += '- None'
 } else {
     foreach ($blocker in ($blockers | Select-Object -Unique)) {
         $summaryLines += "- $blocker"
@@ -353,11 +354,11 @@ if ($blockers.Count -eq 0) {
 }
 
 $summaryLines += ''
-$summaryLines += '## 建议动作'
+$summaryLines += '## Recommended actions'
 $summaryLines += ''
 $uniqueRecommendations = @($recommendations | Select-Object -Unique)
 if ($uniqueRecommendations.Count -eq 0) {
-    $summaryLines += '- 继续保持当前本地基线。'
+    $summaryLines += '- Maintain the current local baseline.'
 } else {
     foreach ($recommendation in $uniqueRecommendations) {
         $summaryLines += "- $recommendation"
@@ -367,7 +368,7 @@ if ($uniqueRecommendations.Count -eq 0) {
 Write-HarnessTextFile -Path $summaryPath -Content ($summaryLines -join [Environment]::NewLine)
 Write-HarnessJsonFile -Path $matrixPath -Data $matrix
 
-Write-Host "已输出本地基线验证报告：" -ForegroundColor Green
+Write-Host "Generated local baseline verification reports: " -ForegroundColor Green
 Write-Host "  - $summaryPath"
 Write-Host "  - $matrixPath"
 

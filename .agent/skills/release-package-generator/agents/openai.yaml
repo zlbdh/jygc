@@ -1,6 +1,6 @@
 interface:
-  display_name: "发布单生成"
-  short_description: "汇总发布顺序回滚步骤观察点与风险摘要生成结构化发布单"
+  display_name: "Release package generation"
+  short_description: "Prepare release order, rollback steps, and monitoring plans"
   default_prompt: "Use $release-package-generator to prepare a release package and rollback checklist for a change."
 
 policy:

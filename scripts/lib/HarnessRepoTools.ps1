@@ -23,7 +23,7 @@ function Parse-HarnessTopLevelListConfig {
     )
 
     if (-not (Test-Path -LiteralPath $YamlPath)) {
-        throw "未找到配置文件：$YamlPath"
+        throw "Configuration file not found: $YamlPath"
     }
 
     $lines = Get-Content -LiteralPath $YamlPath
@@ -145,7 +145,7 @@ function Parse-HarnessExecutionConfig {
     param([string]$YamlPath)
 
     if (-not (Test-Path -LiteralPath $YamlPath)) {
-        throw "未找到 execution.yaml：$YamlPath"
+        throw "execution.yaml not found: $YamlPath"
     }
 
     $lines = Get-Content -LiteralPath $YamlPath

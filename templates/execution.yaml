@@ -38,4 +38,4 @@ lock_state:
 {{LOCK_STATES}}
 snapshot_at: ""
 notes:
-  - "执行期间如果要修改同一文件，必须先更新 owner 与 lock_state。"
+  - "Update owner and lock_state before changing ownership of a file during execution."

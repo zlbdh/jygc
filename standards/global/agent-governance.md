@@ -14,61 +14,61 @@ last_reviewed: 2026-03-31
 source_of_truth: control-repo
 ---
 
-# Agent 治理规则
+# Agent governance rules
 
-## 1. 角色边界
+## 1. Role boundaries
 
-- `change-intake-agent` 只负责需求受理和 `brief.md`
-- `impact-design-agent` 只负责影响分析、设计说明、依赖顺序和阶段级 `execution.yaml`
-- `backend-exec-agent` 只负责 `backend`
-- `web-exec-agent` 只负责 `web-portal`
-- `admin-web-exec-agent` 只负责 `admin-web`
-- `mobile-a-exec-agent` 只负责 `mobile-a`
-- `mobile-b-exec-agent` 只负责 `mobile-b`
-- `mobile-c-planning-agent` 只负责 `mobile-c` 的规划与工程补齐前分析
-- `miniapp-planning-agent` 只负责 `miniapp` 的规划与工程补齐前分析
-- `verification-agent` 只负责验证、报告和验收记录
-- `release-agent` 只负责发布单、回滚单和观察点
-- `knowledge-agent` 只负责复盘和回灌
+- `change-intake-agent` handles only request intake and `brief.md`
+- `impact-design-agent` handles only impact analysis, design notes, dependency order, and stage-level `execution.yaml`
+- `backend-exec-agent` handles only `backend`
+- `web-exec-agent` handles only `web-portal`
+- `admin-web-exec-agent` handles only `admin-web`
+- `mobile-a-exec-agent` handles only `mobile-a`
+- `mobile-b-exec-agent` handles only `mobile-b`
+- `mobile-c-planning-agent` handles only `mobile-c` planning and analysis before project scaffolding is complete
+- `miniapp-planning-agent` handles only `miniapp` planning and analysis before project scaffolding is complete
+- `verification-agent` handles only verification, reports, and acceptance records
+- `release-agent` handles only release records, rollback records, and monitoring points
+- `knowledge-agent` handles only postmortems and knowledge feedback
 
-## 2. 写权限与锁
+## 2. Write permissions and locks
 
-- `brief.md` 默认由 `change-intake-agent` 持有主写权限
-- `impact.yaml`、`design.md`、阶段级 `execution.yaml` 默认由 `impact-design-agent` 持有主写权限
-- `tasks/<repo>.md` 默认由 `task-card-generator` 或对应 repo owner 持有主写权限
-- `verification/result.md` 默认由 `verification-agent` 持有主写权限
-- 发布单默认由 `release-agent` 持有主写权限
-- 同一时间只允许一个 Agent 写一个控制仓主产物
-- 同一时间只允许一个 Agent 写一个业务仓
-- 每个执行 Agent 必须使用独立 branch / worktree
+- `change-intake-agent` owns primary write access to `brief.md` by default
+- `impact-design-agent` owns primary write access to `impact.yaml`, `design.md`, and stage-level `execution.yaml` by default
+- `task-card-generator` or the corresponding repository owner owns primary write access to `tasks/<repo>.md` by default
+- `verification-agent` owns primary write access to `verification/result.md` by default
+- `release-agent` owns primary write access to release records by default
+- Only one agent may write a primary control-repository artifact at a time
+- Only one agent may write a business repository at a time
+- Each execution agent must use an isolated branch / worktree
 
-## 3. 禁止行为
+## 3. Prohibited actions
 
-- 不允许没有 `change-id` 直接开工
-- 不允许跳过 `impact.yaml` 进入跨仓开发
-- 不允许跳过 `execution.yaml` 直接并发分派执行 Agent
-- 不允许一个 Agent 跨越多个执行边界随意改仓
-- 不允许多个 Agent 共享同一个可写 worktree
-- 不允许把发布结论建立在单仓自测之上
-- 不允许默认访问生产环境
+- Do not begin work without a `change-id`
+- Do not begin cross-repository development without `impact.yaml`
+- Do not dispatch concurrent execution agents without `execution.yaml`
+- Do not let one agent make arbitrary changes across multiple execution boundaries
+- Do not let multiple agents share a writable worktree
+- Do not base a release conclusion on a single repository's self-tests
+- Do not access production environments by default
 
-## 4. 协作原则
+## 4. Collaboration principles
 
-- 任务先按仓边界拆，再分配给 Agent
-- Agent 输出必须回填到控制仓结构化文件
-- 所有结论都要附带快照来源：报告、分支、提交、环境或时间戳
-- 人工审查只对正确性、风险和发布条件负责
-- Agent 不替代负责人做业务裁决
+- Split tasks by repository boundaries before assigning agents
+- Write agent output back to structured files in the control repository
+- Attach snapshot sources to all conclusions: reports, branches, commits, environments, or timestamps
+- Human review focuses on correctness, risks, and release conditions
+- Agents do not make business decisions on behalf of accountable owners
 
-## 5. 冲突处理
+## 5. Conflict resolution
 
-- 多个 Agent 可同时读同一 skill、同一规则和同一只读 MCP
-- 如果两个 Agent 需要同写同一产物，第二个只能读或以评审意见附加，不能并写主文件
-- 同级规则冲突不得猜测执行，必须写入 `impact.yaml` 或 `design.md` 的 `待确认`
-- 原型仓 `mobile-c`、`miniapp` 当前不进入正式执行 Agent 池
+- Multiple agents may read the same skill, rule, or read-only MCP concurrently
+- If two agents need to write the same artifact, the second may only read or append review comments; it must not write the primary file concurrently
+- Do not guess when same-level rules conflict. Record the conflict under `Needs confirmation` in `impact.yaml` or `design.md`
+- Prototype repositories `mobile-c` and `miniapp` are currently excluded from the regular execution-agent pool
 
-## 6. 当前阶段默认模式
+## 6. Default mode at this stage
 
-- AI 主执行
-- 人审合并
-- 控制仓是唯一入口
+- AI performs the primary execution
+- Human review before merging
+- The control repository is the single entry point

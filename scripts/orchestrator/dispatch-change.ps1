@@ -308,7 +308,7 @@ function Add-ContentSection {
     $Lines.Add(("### {0}" -f $Heading))
     $Lines.Add('')
     if ([string]::IsNullOrWhiteSpace($Body)) {
-        $Lines.Add('无')
+        $Lines.Add('None')
         $Lines.Add('')
         return
     }
@@ -377,29 +377,29 @@ function New-WorkerPacketContent {
     $lines = New-Object System.Collections.Generic.List[string]
     $lines.Add(("# Worker Packet / {0} / {1}" -f $CurrentChangeId, $RepoMeta.id))
     $lines.Add('')
-    $lines.Add('## 角色绑定')
+    $lines.Add('## Role binding')
     $lines.Add('')
-    $lines.Add(('- change-id：`{0}`' -f $CurrentChangeId))
-    $lines.Add(('- 标题：{0}' -f $ChangeTitle))
-    $lines.Add(('- repo：`{0}`' -f $RepoMeta.id))
-    $lines.Add(('- role：`{0}`' -f $RoleMeta.id))
-    $lines.Add(('- runtime_type：`{0}`' -f $RoleMeta.runtime_type))
-    $lines.Add(('- workflow：`{0}`' -f $RoleMeta.default_workflow))
-    $lines.Add(('- branch：`{0}`' -f $ExecutionConfig.Branch[$RepoMeta.id]))
-    $lines.Add(('- worktree：`{0}`' -f $ResolvedWorktree))
-    $lines.Add(('- snapshot_policy：`{0}`' -f $SnapshotPolicy))
+    $lines.Add(('- change-id: `{0}`' -f $CurrentChangeId))
+    $lines.Add(('- Title: {0}' -f $ChangeTitle))
+    $lines.Add(('- repo: `{0}`' -f $RepoMeta.id))
+    $lines.Add(('- role: `{0}`' -f $RoleMeta.id))
+    $lines.Add(('- runtime_type: `{0}`' -f $RoleMeta.runtime_type))
+    $lines.Add(('- workflow: `{0}`' -f $RoleMeta.default_workflow))
+    $lines.Add(('- branch: `{0}`' -f $ExecutionConfig.Branch[$RepoMeta.id]))
+    $lines.Add(('- worktree: `{0}`' -f $ResolvedWorktree))
+    $lines.Add(('- snapshot_policy: `{0}`' -f $SnapshotPolicy))
     if (-not [string]::IsNullOrWhiteSpace($SnapshotSource)) {
-        $lines.Add(('- snapshot_source：`{0}`' -f $SnapshotSource))
+        $lines.Add(('- snapshot_source: `{0}`' -f $SnapshotSource))
     }
-    $lines.Add(('- worker result：`{0}`' -f $WorkerResultRelative))
-    $lines.Add(('- review result：`{0}`' -f $ReviewResultRelative))
+    $lines.Add(('- worker result: `{0}`' -f $WorkerResultRelative))
+    $lines.Add(('- review result: `{0}`' -f $ReviewResultRelative))
     $lines.Add('')
-    $lines.Add('## 执行边界')
+    $lines.Add('## Execution boundaries')
     $lines.Add('')
-    $lines.Add('- 只允许在当前 worktree 中执行。')
-    $lines.Add('- 当前任务属于真实写代码模式时，worktree 必须是独立且干净的；不得直接在主仓脏工作树中执行。')
-    $lines.Add('- 如果启用了 `source_dirty_tracked`，当前 worktree 已同步 source repo 的 tracked dirty snapshot。')
-    $lines.Add('- 只允许修改下列 write scope：')
+    $lines.Add('- Execute only in the current worktree.')
+    $lines.Add('- For actual code-editing tasks, use an isolated, clean worktree. Do not execute directly in a dirty main-repository working tree.')
+    $lines.Add('- If `source_dirty_tracked` is enabled, this worktree already contains the tracked dirty snapshot from the source repository.')
+    $lines.Add('- Modify only the following write scope: ')
     foreach ($pathPattern in $AllowedPaths) {
         $lines.Add(('  - `{0}`' -f $pathPattern))
     }
@@ -407,33 +407,33 @@ function New-WorkerPacketContent {
         $lines.Add('  - `[]`')
     }
     if ($SnapshotTrackedFiles.Count -gt 0) {
-        $lines.Add('- 当前同步进 worktree 的 source tracked dirty files：')
+        $lines.Add('- Source tracked dirty files synchronized into this worktree: ')
         foreach ($snapshotFile in $SnapshotTrackedFiles) {
             $lines.Add(('  - `{0}`' -f $snapshotFile))
         }
     }
     if ($SnapshotActions.Count -gt 0) {
-        $lines.Add('- 本次 snapshot actions：')
+        $lines.Add('- Snapshot actions for this run: ')
         foreach ($snapshotAction in $SnapshotActions) {
             $lines.Add(('  - `{0}`' -f $snapshotAction))
         }
     }
     if (-not [string]::IsNullOrWhiteSpace($SnapshotBlockedReason)) {
-        $lines.Add(('- snapshot blocked reason：{0}' -f $SnapshotBlockedReason))
+        $lines.Add(('- snapshot blocked reason: {0}' -f $SnapshotBlockedReason))
     }
-    $lines.Add('- 不得直接改写 `verification/result.md`。')
-    $lines.Add('- 完成后必须运行本仓验证命令，并把结果交回 worker result。')
+    $lines.Add('- Do not directly rewrite `verification/result.md`.')
+    $lines.Add('- Run repository verification commands after implementation and return the results in the worker result.')
     $lines.Add('')
-    $lines.Add('## 默认技能')
+    $lines.Add('## Default skills')
     $lines.Add('')
     foreach ($skill in $roleSkills) {
         $lines.Add(('- `{0}`' -f $skill))
     }
     if ($roleSkills.Count -eq 0) {
-        $lines.Add('- `无`')
+        $lines.Add('- `None`')
     }
     $lines.Add('')
-    $lines.Add('## 建议验证命令')
+    $lines.Add('## Recommended verification commands')
     $lines.Add('')
     foreach ($command in $roleVerifyCommands) {
         $lines.Add(('- `{0}`' -f $command))
@@ -444,7 +444,7 @@ function New-WorkerPacketContent {
         }
     }
     $lines.Add('')
-    $lines.Add('## 上下文快照')
+    $lines.Add('## Context snapshots')
     $lines.Add('')
     $taskHeading = 'tasks/{0}.md' -f $RepoMeta.id
 
@@ -458,7 +458,7 @@ function New-WorkerPacketContent {
     }
 
     if (-not [string]::IsNullOrWhiteSpace($BaselineSummary)) {
-        $baselineHeading = '### 最近基线摘要（{0}）' -f $BaselineSummaryPath
+        $baselineHeading = '### Latest baseline summary ({0})' -f $BaselineSummaryPath
         $lines.Add($baselineHeading)
         $lines.Add('')
         $codeFence = '```'
@@ -478,16 +478,16 @@ function New-WorkerPacketContent {
         Add-ContentSection -Lines $lines -Heading $LatestReviewJsonHeading -Body $LatestReviewJsonContent
     }
 
-    $lines.Add('## Worker 执行要求')
+    $lines.Add('## Worker execution requirements')
     $lines.Add('')
-    $lines.Add('1. 先阅读全部上下文快照，再决定是否动手。')
-    $lines.Add('2. 只在允许路径内修改代码、测试、配置或 SQL 脚本。')
-    $lines.Add('3. 改完后必须运行最小验证命令。')
-    $lines.Add('4. 最终结果由外层 wrapper 写回 `verification/workers/<repo>.md`，你只需要在最终消息中输出结构化结果。')
-    $lines.Add('5. 如果任务卡信息不足、write scope 不足或验证失败无法解决，返回阻塞结论，不要越界修改。')
+    $lines.Add('1. Read all context snapshots before deciding whether to proceed.')
+    $lines.Add('2. Modify code, tests, configuration, or SQL scripts only within permitted paths.')
+    $lines.Add('3. Run minimum verification commands after making changes.')
+    $lines.Add('4. The outer wrapper writes results to `verification/workers/<repo>.md`. Return only structured results in the final message.')
+    $lines.Add('5. If task-card information or write scope is insufficient, or verification failures cannot be resolved, return a blocked result. Do not change files outside the scope.')
     if ((-not [string]::IsNullOrWhiteSpace($LatestReviewContent)) -or (-not [string]::IsNullOrWhiteSpace($LatestReviewJsonContent))) {
-        $lines.Add('6. 如果 packet 附带了最近 review 结果，且 review 指出了 write scope 内仍未修复的问题，这些 finding 视为本轮必修项。')
-        $lines.Add('7. 不得仅因目标文件已经有未提交改动就返回 `no_changes`；必须以“review 中指出的问题是否已在当前文件内容中被消除”为准。')
+        $lines.Add('6. If the packet includes recent review results with unresolved findings inside the write scope, those findings must be fixed in this run.')
+        $lines.Add('7. Do not return `no_changes` merely because target files already contain uncommitted edits. Determine whether the current file content resolves the review findings.')
     }
 
     return ($lines -join [Environment]::NewLine) + [Environment]::NewLine
@@ -506,7 +506,7 @@ function Export-HarnessTrackedDirtyPatch {
 
     $result = Invoke-HarnessCommand -Command 'git diff --binary --no-ext-diff 2>nul' -WorkingDirectory $SourceRepoPath
     if ($result.ExitCode -ne 0) {
-        throw "导出 tracked dirty patch 失败：$($result.Output)"
+        throw "Failed to export the tracked dirty patch: $($result.Output)"
     }
 
     $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
@@ -533,7 +533,7 @@ function Apply-HarnessTrackedDirtyPatch {
         }
     }
 
-    throw "tracked dirty patch 应用失败：$lastOutput"
+    throw "Failed to apply the tracked dirty patch: $lastOutput"
 }
 
 function Sync-HarnessTrackedDirtySnapshot {
@@ -567,7 +567,7 @@ function Sync-HarnessTrackedDirtySnapshot {
                 $actions.Add(("synced-deleted:{0}" -f $relativePath))
             }
             default {
-                throw "source_dirty_tracked 当前不支持状态 `$status`：$relativePath"
+                throw "source_dirty_tracked does not currently support status `$status`: $relativePath"
             }
         }
     }
@@ -600,7 +600,7 @@ function Ensure-RepositoryWorktree {
 
     $result = Invoke-HarnessCommand -Command $command -WorkingDirectory $RepoMeta.local_path
     if ($result.ExitCode -ne 0) {
-        throw "创建 worktree 失败：$($RepoMeta.id) -> $($result.Output)"
+        throw "Failed to create worktree: $($RepoMeta.id) -> $($result.Output)"
     }
 
     return 'created'
@@ -674,17 +674,17 @@ $effectiveEnsureWorktrees = [bool]($EnsureWorktrees -or $ExecuteWorkers)
 
 foreach ($repoId in $targetRepoIds) {
     if (-not $execution.RepoOwners.ContainsKey($repoId)) {
-        throw "execution.yaml 未登记 repo_owner：$repoId"
+        throw "repo_owner is not registered in execution.yaml: $repoId"
     }
 
     if (-not $repoMap.ContainsKey($repoId)) {
-        throw "repos.yaml 未登记仓库：$repoId"
+        throw "Repository is not registered in repos.yaml: $repoId"
     }
 
     $repoMeta = $repoMap[$repoId]
     $roleId = if ($execution.RegistryRef.ContainsKey($repoId) -and -not [string]::IsNullOrWhiteSpace($execution.RegistryRef[$repoId])) { $execution.RegistryRef[$repoId] } else { $execution.RepoOwners[$repoId] }
     if (-not $registryMap.ContainsKey($roleId)) {
-        throw "agent-registry 未找到角色：$roleId"
+        throw "Role not found in agent-registry: $roleId"
     }
 
     $roleMeta = $registryMap[$roleId]
@@ -717,9 +717,9 @@ foreach ($repoId in $targetRepoIds) {
         ("runtime/review-results/{0}.json" -f $repoId)
     )
     $latestReviewContent = if ($null -ne $reviewMarkdownPath) { Read-HarnessTextOrEmpty -Path $reviewMarkdownPath } else { '' }
-    $latestReviewHeading = if ($null -ne $reviewMarkdownPath) { "最近 review 结果（$reviewMarkdownPath）" } else { '' }
+    $latestReviewHeading = if ($null -ne $reviewMarkdownPath) { "Latest review result ($reviewMarkdownPath)" } else { '' }
     $latestReviewJsonContent = if ($null -ne $reviewJsonPath) { Read-HarnessTextOrEmpty -Path $reviewJsonPath } else { '' }
-    $latestReviewJsonHeading = if ($null -ne $reviewJsonPath) { "最近 review JSON（$reviewJsonPath）" } else { '' }
+    $latestReviewJsonHeading = if ($null -ne $reviewJsonPath) { "Latest review JSON ($reviewJsonPath)" } else { '' }
 
     $packetPath = Join-Path $packetDir ("{0}-worker.md" -f $repoId)
     $packetContent = New-WorkerPacketContent -CurrentChangeId $ChangeId -ChangeTitle $execution.Title -RepoMeta $repoMeta -RoleMeta $roleMeta -ExecutionConfig $execution -ResolvedWorktree $resolvedWorktree -SnapshotPolicy $snapshotPolicy -SnapshotSource $snapshotSource -SnapshotTrackedFiles @($snapshotTrackedFiles) -SnapshotActions @($snapshotActions) -SnapshotBlockedReason $snapshotBlockedReason -WorkerResultRelative $workerResultRelative -ReviewResultRelative $reviewResultRelative -AllowedPaths $allowedPaths -BriefContent $briefContent -ImpactContent $impactContent -ExecutionContent $executionContent -TaskContent $taskContent -RuleContent $ruleContent -BaselineSummary $baselineSummary -BaselineSummaryPath $baselineSummaryPath -LatestReviewContent $latestReviewContent -LatestReviewHeading $latestReviewHeading -LatestReviewJsonContent $latestReviewJsonContent -LatestReviewJsonHeading $latestReviewJsonHeading
@@ -761,17 +761,17 @@ foreach ($repoId in $targetRepoIds) {
         $targetHeadCommit = if (Test-Path -LiteralPath $resolvedWorktree) { Get-HarnessHeadCommit -RepoPath $resolvedWorktree } else { '' }
 
         if ($matchingUntrackedFiles.Count -gt 0) {
-            $snapshotBlockedReason = "source repo 存在 write scope 内未跟踪文件：$($matchingUntrackedFiles -join '、')"
+            $snapshotBlockedReason = "The source repository contains untracked files within the write scope: $($matchingUntrackedFiles -join ', ')"
             $snapshotActions += 'blocked-untracked-in-scope'
         } elseif (-not (Test-HarnessDispatchWorktreeClean -RepoPath $resolvedWorktree)) {
-            $snapshotBlockedReason = "target worktree 非干净状态：$resolvedWorktree"
+            $snapshotBlockedReason = "The target worktree has uncommitted changes: $resolvedWorktree"
             $snapshotActions += 'blocked-target-worktree-dirty'
         } elseif (
             (-not [string]::IsNullOrWhiteSpace($sourceHeadCommit)) -and
             (-not [string]::IsNullOrWhiteSpace($targetHeadCommit)) -and
             ($sourceHeadCommit -ne $targetHeadCommit)
         ) {
-            $snapshotBlockedReason = "source repo 与 target worktree 的 HEAD 不一致：$sourceHeadCommit != $targetHeadCommit"
+            $snapshotBlockedReason = "Source repository and target worktree HEADs differ: $sourceHeadCommit != $targetHeadCommit"
             $snapshotActions += 'blocked-anchor-mismatch'
         } elseif ($snapshotTrackedFiles.Count -gt 0) {
             try {
@@ -798,7 +798,7 @@ foreach ($repoId in $targetRepoIds) {
         Write-HarnessTextFile -Path $packetPath -Content $packetContent
         $workerResultPath = Convert-ToHarnessAbsolutePath -BasePath $changeDir -RelativePath $workerResultRelative
         if (-not (Test-Path -LiteralPath $workerResultPath)) {
-            Write-HarnessTextFile -Path $workerResultPath -Content ("# {0} / {1}`r`n`r`n- 当前状态：待执行`r`n" -f $ChangeId, $repoId)
+            Write-HarnessTextFile -Path $workerResultPath -Content ("# {0} / {1}`r`n`r`n- Current status: Pending execution`r`n" -f $ChangeId, $repoId)
         }
     }
 
@@ -837,7 +837,7 @@ if (-not $DryRun) {
     Write-HarnessJsonFile -Path $dispatchStatePath -Data $dispatchState
 }
 
-Write-Host "Worker dispatch 已准备：$ChangeId" -ForegroundColor Green
+Write-Host "Worker dispatch prepared: $ChangeId" -ForegroundColor Green
 foreach ($item in $dispatchItems) {
     Write-Host ("  - {0}: {1} / {2}" -f $item.repo_id, $item.role_id, $item.worktree_status) -ForegroundColor Cyan
 }
@@ -849,7 +849,7 @@ if ($ExecuteWorkers -and -not $DryRun) {
     $runRoleScript = Join-Path $repoRoot 'scripts\orchestrator\run-role.ps1'
     foreach ($item in $dispatchItems) {
         if (-not [string]::IsNullOrWhiteSpace([string]$item.blocked_reason)) {
-            throw "worker 派工被阻断：$($item.repo_id) -> $($item.blocked_reason)"
+            throw "Worker dispatch blocked: $($item.repo_id) -> $($item.blocked_reason)"
         }
 
         $invokeArgs = @(
@@ -877,7 +877,7 @@ if ($ExecuteWorkers -and -not $DryRun) {
 
         & powershell @invokeArgs
         if ($LASTEXITCODE -ne 0) {
-            throw "worker 执行失败：$($item.repo_id)"
+            throw "Worker execution failed: $($item.repo_id)"
         }
     }
 }

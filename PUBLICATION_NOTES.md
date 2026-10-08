@@ -1,21 +1,21 @@
-# 公开发布说明
+# Public release notes
 
-本仓库是公开脱敏版，目标是展示 Agent Harness 控制平面的结构和执行思路，而不是发布任何真实业务资产。
+This sanitized public edition demonstrates the structure and execution model of the Agent Harness control plane. It contains no actual business assets.
 
-已排除的内容：
+Excluded content:
 
-- 真实业务仓代码与本地 worktree
-- 真实远程仓库地址、组织名、项目名和本地路径
-- 运行时 worker 输出、console 日志、快照、验证报告和发布产物
-- 截图、流程图和可能包含业务界面的图片
-- 具体客户、人员、账号、密钥、访问令牌、手机号、邮箱、身份证号等敏感信息
+- Actual business-repository code and local worktrees
+- Actual remote repository URLs, organization names, project names, and local paths
+- Runtime worker output, console logs, snapshots, verification reports, and release artifacts
+- Screenshots, flowcharts, and images that may show business interfaces
+- Sensitive information such as identifiable customers, people, accounts, keys, access tokens, phone numbers, email addresses, and government identification numbers
 
-保留的内容：
+Included content:
 
-- 控制仓目录结构
-- 变更单、任务卡、验收、发布和复盘模板
-- repo worker / review worker 的本地调度脚本
-- 机器可读的角色注册表、示例仓库清单和 schema
-- MCP 只读接入蓝图和全局治理规则
+- Control-repository directory structure
+- Templates for change records, task cards, acceptance, releases, and postmortems
+- Local dispatch scripts for repository workers and review workers
+- Machine-readable role registry, sample repository inventory, and schemas
+- Read-only MCP integration blueprints and global governance rules
 
-注意：`repos/repos.yaml` 中的地址和路径均为占位示例，不能直接用于访问真实仓库。
+The URLs and paths in `repos/repos.yaml` are placeholders. They cannot be used to access actual repositories.

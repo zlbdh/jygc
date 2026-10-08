@@ -15,7 +15,7 @@ mcps:
         - describe_table
         - list_tables
     notes:
-      - "仅允许读取开发或测试环境中的表结构和索引信息。"
+      - "Only read table structures and indexes in development or test environments."
   - name: api-contract-readonly
     status: blueprint
     environment: dev-or-test
@@ -33,7 +33,7 @@ mcps:
         - get_endpoint_contract
         - list_contracts
     notes:
-      - "统一暴露接口契约、样例和版本信息。"
+      - "Provide a shared view of API contracts, examples, and version information."
   - name: config-readonly
     status: blueprint
     environment: dev-or-test
@@ -49,7 +49,7 @@ mcps:
         - get_config_key
         - list_config_groups
     notes:
-      - "只读查看配置映射，不允许修改或发布配置。"
+      - "Inspect configuration mappings through read-only access. Do not modify or publish configuration."
   - name: observability-readonly
     status: blueprint
     environment: dev-or-test
@@ -67,4 +67,4 @@ mcps:
         - get_trace
         - list_recent_errors
     notes:
-      - "只读查看开发或测试环境的日志、trace 和报错摘要。"
+      - "Read logs, traces, and error summaries in development or test environments only."

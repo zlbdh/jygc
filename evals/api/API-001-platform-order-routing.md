@@ -1,26 +1,26 @@
-# API-001 平台订单路由到企业
+# API-001 Routing platform orders to enterprises
 
-## 类型
+## Type
 
-- 文档型回归
-- 后续自动化：接口 smoke
+- Documented regression case
+- Planned automation: API smoke tests
 
-## 目标
+## Goals
 
-验证平台来源订单能正确路由到目标企业及后续处理链路。
+Verify that orders originating on the platform route correctly to the target enterprise and subsequent processing workflow.
 
-## 输入
+## Inputs
 
-- 平台侧可创建一笔归属企业的订单
+- The platform can create an order belonging to an enterprise
 
-## 步骤
+## Steps
 
-1. 在平台侧创建订单
-2. 观察 `backend` 中订单归属、企业标识和状态流转
-3. 在企业端查看订单是否可见
+1. Create an order on the platform
+2. Inspect order ownership, the enterprise identifier, and state transitions in `backend`
+3. Check whether the order is visible in the enterprise portal
 
-## 预期结果
+## Expected results
 
-- 路由规则正确
-- 企业可见且可继续处理
-- 状态流和归属信息一致
+- Routing rules work correctly
+- The enterprise can see and continue processing the order
+- State flow and ownership information are consistent

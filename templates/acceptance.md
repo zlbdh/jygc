@@ -1,23 +1,23 @@
-# {{CHANGE_ID}} 验收清单
+# {{CHANGE_ID}} Acceptance checklist
 
-## 验收前提
+## Acceptance prerequisites
 
-- 
+-
 
-## 用户流程验收
+## User workflow acceptance
 
-| 步骤 | 所在端 | 操作 | 预期结果 |
+| Step | Platform | Action | Expected result |
 |------|--------|------|----------|
 | 1 |  |  |  |
 | 2 |  |  |  |
 | 3 |  |  |  |
 
-## 异常场景
+## Exception scenarios
 
-- 
+-
 
-## 验收结论
+## Acceptance conclusion
 
-- [ ] 通过
-- [ ] 有条件通过
-- [ ] 未通过
+- [ ] Passed
+- [ ] Conditionally passed
+- [ ] Failed

@@ -1,19 +1,19 @@
-# 《完整实战模板》
+# Complete Practical Template
 
-## 1. 使用方式
+## 1. How to use this template
 
-本模板用于指导“新增一个跨仓模块”时，控制仓和业务仓应该如何组织产物。  
-示例模块：**新增服务人员排班与考勤模块**。
+This template explains how the control repository and business repositories should organize artifacts when adding a cross-repository module.
+Example module: **add staff scheduling and attendance**.
 
-目标：
+Goals:
 
-- 企业可为服务人员创建排班
-- 服务人员可查看排班并签到/签退
-- 异常打卡可发起申诉
-- 企业可审批申诉
-- 平台可查看监管数据
+- Enterprises can create staff schedules
+- Staff can view schedules and clock in/out
+- Staff can appeal attendance exceptions
+- Enterprises can review appeals
+- The platform can view oversight data
 
-## 2. 示例目录结构
+## 2. Example directory structure
 
 ```text
 changes/CHG-2026-0002-staff-scheduling-attendance/
@@ -33,45 +33,45 @@ changes/CHG-2026-0002-staff-scheduling-attendance/
   postmortem.md
 ```
 
-## 3. 示例 `brief.md`
+## 3. Example `brief.md`
 
 ```md
-# CHG-2026-0002 - 新增服务人员排班与考勤模块
+# CHG-2026-0002 - Add staff scheduling and attendance
 
-## 业务目标
-- 企业可为服务人员创建排班
-- 服务人员可查看排班并签到/签退
-- 异常打卡可发起申诉
-- 企业可审批异常申诉
-- 平台可查看监管数据
+## Business goals
+- Enterprises can create staff schedules
+- Staff can view schedules and clock in/out
+- Staff can appeal attendance exceptions
+- Enterprises can review exception appeals
+- The platform can view oversight data
 
-## 用户角色
-- 企业管理员
-- 服务人员
-- 平台监管人员
+## User roles
+- Enterprise administrators
+- Staff
+- Platform oversight staff
 
-## 成功标准
-- 企业后台可创建、编辑、停用排班
-- 服务员端可查看个人排班并完成签到签退
-- 考勤记录能回写后端并可查询
-- 异常申诉能形成审批流
-- 平台端可查看排班与异常统计
+## Success criteria
+- The enterprise administration portal can create, edit, and deactivate schedules
+- Staff can view their own schedules and clock in/out in the staff app
+- Attendance records are saved to the backend and can be queried
+- Exception appeals enter an approval workflow
+- The platform can view schedule and exception statistics
 
-## 非目标
-- 本期不做智能排班推荐
-- 本期不做工资自动结算
+## Non-goals
+- Intelligent schedule recommendations are out of scope for this phase
+- Automatic payroll settlement is out of scope for this phase
 
-## 风险说明
-- 涉及跨端状态同步
-- 涉及定位打卡与异常申诉
-- 涉及平台端与企业端权限边界
+## Risk notes
+- Cross-platform state synchronization
+- Location-based attendance and exception appeals
+- Permission boundaries between platform and enterprise users
 ```
 
-## 4. 示例 `impact.yaml`
+## 4. Example `impact.yaml`
 
 ```yaml
 change_id: "CHG-2026-0002-staff-scheduling-attendance"
-title: "新增服务人员排班与考勤模块"
+title: "Add staff scheduling and attendance"
 is_cross_repo: true
 affected_repos:
   - id: backend
@@ -103,14 +103,14 @@ dependency_order:
   - mobile-a
   - admin-web
 notes:
-  - "后端先行，前后端字段必须统一。"
+  - "Implement the backend first and keep frontend/backend fields consistent."
 ```
 
-## 5. 示例 `execution.yaml`
+## 5. Example `execution.yaml`
 
 ```yaml
 change_id: "CHG-2026-0002-staff-scheduling-attendance"
-title: "新增服务人员排班与考勤模块"
+title: "Add staff scheduling and attendance"
 stage: planned
 stage_owner: impact-design-agent
 repo_owners:
@@ -162,179 +162,179 @@ lock_state:
 snapshot_at: "2026-03-31T21:00:00+08:00"
 ```
 
-## 6. 示例 `design.md`
+## 6. Example `design.md`
 
 ```md
-# CHG-2026-0002 设计说明
+# CHG-2026-0002 Design notes
 
-## 目标
-- 新增服务人员排班与考勤模块
+## Goals
+- Add staff scheduling and attendance
 
-## 业务链路
-- 企业创建排班
-- 服务人员查看排班
-- 服务人员签到/签退
-- 系统记录考勤
-- 异常时发起申诉
-- 企业审批
-- 平台查看监管数据
+## Business workflows
+- Enterprise creates a schedule
+- Staff view their schedules
+- Staff clock in/out
+- The system records attendance
+- Submit an appeal for an exception
+- Enterprise approval
+- Platform views oversight data
 
-## 数据流 / 状态流
-- 排班主数据在 backend
-- 打卡记录主数据在 backend
-- 审批状态主数据在 backend
-- web-portal / mobile-a / mobile-c / admin-web 只消费或触发状态变化
+## Data flow / state flow
+- Schedule master data lives in backend
+- Attendance master data lives in backend
+- Approval-state master data lives in backend
+- web-portal / mobile-a / mobile-c / admin-web only consume state or trigger state changes
 
-## 接口与数据变更
-- 排班接口
-- 考勤接口
-- 申诉与审批接口
-- 排班、考勤、申诉相关表
+## Interface and data changes
+- Scheduling APIs
+- Attendance APIs
+- Appeal and approval APIs
+- Tables for schedules, attendance, and appeals
 
-## 跨仓依赖顺序
+## Cross-repository dependency order
 - backend
 - web-portal
 - mobile-c
 - mobile-a
 - admin-web
 
-## 失败处理
-- 重复签到要幂等
-- 超范围定位要拒绝或进入异常申诉
-- 审批失败不得丢失考勤留痕
+## Failure handling
+- Repeated clock-in requests must be idempotent
+- Reject out-of-range locations or route them to an exception appeal
+- Approval failures must not lose attendance audit records
 
-## 兼容策略
-- 第一阶段只新增，不替换现有工单体系
+## Compatibility strategy
+- Phase one adds capabilities without replacing the existing work-order system
 
-## 发布与回滚考虑
-- 后端先发，前端与移动端后发
+## Release and rollback considerations
+- Release the backend first, followed by web and mobile clients
 
-## 待确认
-- 是否需要离线打卡补传
+## Needs confirmation
+- Is deferred upload of offline attendance required?
 ```
 
-## 7. 示例任务卡
+## 7. Example task cards
 
 ### 7.1 `tasks/backend.md`
 
 ```md
-# CHG-2026-0002 / backend 任务卡
+# CHG-2026-0002 / backend Task card
 
-## 输入
-- 排班、打卡、申诉、审批业务需求
+## Inputs
+- Business requirements for scheduling, attendance, appeals, and approvals
 
-## 输出
-- 排班接口
-- 签到签退接口
-- 申诉与审批接口
-- 表结构与状态流
+## Outputs
+- Scheduling APIs
+- Clock-in/clock-out APIs
+- Appeal and approval APIs
+- Table structures and state flows
 
-## 改动边界
-- 仅限排班/考勤/申诉相关模块
+## Change boundaries
+- Only scheduling, attendance, and appeal modules
 
-## 禁止改动项
-- 不顺手改无关订单、商城、财务逻辑
+## Prohibited changes
+- Do not change unrelated order, commerce, or finance logic
 
-## 本仓验证命令
-- 构建：mvn package -DskipTests
-- 测试：mvn test
-- Smoke：mvn -Dtest=*Attendance* test
+## Repository verification commands
+- Build: mvn package -DskipTests
+- Test: mvn test
+- Smoke: mvn -Dtest=*Attendance* test
 ```
 
 ### 7.2 `tasks/web-portal.md`
 
 ```md
-## 输出
-- 排班管理页
-- 考勤记录页
-- 异常申诉审批页
+## Outputs
+- Schedule management page
+- Attendance records page
+- Exception appeal approval page
 ```
 
 ### 7.3 `tasks/admin-web.md`
 
 ```md
-## 输出
-- 平台监管统计页
-- 异常申诉查看页
+## Outputs
+- Platform oversight statistics page
+- Exception appeal viewer
 ```
 
 ### 7.4 `tasks/mobile-a.md`
 
 ```md
-## 输出
-- 企业移动端查看排班
-- 企业移动审批异常打卡
+## Outputs
+- View schedules in the enterprise mobile app
+- Approve attendance exceptions in the enterprise mobile app
 ```
 
 ### 7.5 `tasks/mobile-c.md`
 
 ```md
-## 输出
-- 我的排班页
-- 签到/签退页
-- 异常申诉页
+## Outputs
+- My schedule page
+- Clock-in/clock-out page
+- Exception appeal page
 ```
 
-## 8. 示例 `acceptance.md`
+## 8. Example `acceptance.md`
 
 ```md
-# CHG-2026-0002 验收清单
+# CHG-2026-0002 Acceptance checklist
 
-1. 企业后台创建排班
-   预期：排班创建成功，服务员端可见
+1. Create a schedule in the enterprise administration portal
+   Expected: the schedule is created successfully and appears in the staff app
 
-2. 服务员查看排班
-   预期：只看到本人排班，状态正确
+2. Staff view their schedule
+   Expected: staff see only their own schedules with the correct status
 
-3. 服务员签到
-   预期：生成考勤记录，状态为已签到
+3. Staff clock in
+   Expected: an attendance record is created with clocked-in status
 
-4. 服务员异常申诉
-   预期：生成申诉单，企业端待审批
+4. Staff submit an exception appeal
+   Expected: an appeal is created and awaits enterprise approval
 
-5. 企业审批申诉
-   预期：审批结果同步到服务员端和监管端
+5. Enterprise reviews the appeal
+   Expected: the approval result synchronizes to the staff and oversight interfaces
 
-6. 平台查看监管数据
-   预期：能看到排班、打卡、异常申诉统计
+6. Platform views oversight data
+   Expected: schedule, attendance, and exception-appeal statistics are visible
 ```
 
-## 9. 示例 `verification/result.md`
+## 9. Example `verification/result.md`
 
 ```md
-# CHG-2026-0002 验证结果
+# CHG-2026-0002 Verification results
 
-## 执行摘要
-- 当前状态：待联调
-- 快照来源：本地基线 + 仓内验证
-- 快照时间：2026-03-31 21:00:00
+## Execution summary
+- Current status: Pending integration testing
+- Snapshot source: Local baseline + repository verification
+- Snapshot time: 2026-03-31 21:00:00
 
-## 仓内验证结果
-| 仓库 | 执行命令 | 结果 | 备注 |
+## Repository verification results
+| Repository | Command | Result | Notes |
 |------|----------|------|------|
-| backend | mvn test | PASS | 排班与考勤相关测试通过 |
-| web-portal | npm run build | PASS | 页面构建通过 |
-| admin-web | npm run build | PASS | 平台监管页构建通过 |
-| mobile-a | npm run lint | PASS | 企业端移动规则通过 |
-| mobile-c | npm run lint | PASS | 原型仓已补齐基础工程 |
+| backend | mvn test | PASS | Scheduling and attendance tests passed |
+| web-portal | npm run build | PASS | Page build passed |
+| admin-web | npm run build | PASS | Platform oversight page build passed |
+| mobile-a | npm run lint | PASS | Enterprise mobile rules passed |
+| mobile-c | npm run lint | PASS | Basic project scaffolding has been added to the prototype repository |
 
-## 跨仓验收结果
-| 步骤 | 验收项 | 结果 | 备注 |
+## Cross-repository acceptance results
+| Step | Acceptance item | Result | Notes |
 |------|--------|------|------|
-| 1 | 企业创建排班 | PASS | |
-| 2 | 服务员查看排班 | PASS | |
-| 3 | 服务员签到 | PASS | |
-| 4 | 异常申诉 | PASS | |
-| 5 | 企业审批 | PASS | |
-| 6 | 平台监管查看 | PASS | |
+| 1 | Enterprise creates a schedule | PASS | |
+| 2 | Staff view their schedule | PASS | |
+| 3 | Staff clock in | PASS | |
+| 4 | Exception appeal | PASS | |
+| 5 | Enterprise approval | PASS | |
+| 6 | View platform oversight | PASS | |
 
-## 遗留风险
-- 定位异常场景仍需补边界测试
+## Remaining risks
+- Location exception scenarios still need boundary tests
 ```
 
-## 10. 示例发布顺序
+## 10. Example release order
 
-推荐顺序：
+Recommended order:
 
 1. `backend`
 2. `admin-web`
@@ -342,23 +342,23 @@ snapshot_at: "2026-03-31T21:00:00+08:00"
 4. `mobile-a`
 5. `mobile-c`
 
-原因：
+Reasons:
 
-- 没有后端接口，前端和移动端先发没有意义
-- 平台监管依赖后端状态
-- 企业端和服务员端都依赖最终接口与状态流
+- Frontend and mobile releases require the backend APIs first
+- Platform oversight depends on backend state
+- Both enterprise and staff clients depend on the final APIs and state flows
 
-## 11. 示例复盘回灌
+## 11. Example postmortem feedback
 
-如果上线后发现“服务员签到成功但企业端未同步显示”，复盘最少要做以下之一：
+If staff clock in successfully after release but the enterprise display does not synchronize, the postmortem must produce at least one of these actions:
 
-- 在控制仓补一条跨仓状态同步规则
-- 在黄金回归集中新增“签到后企业端可见”用例
-- 在 `postmortem.md` 写清根因和回灌动作
-- 补一个专门检查同步字段的一次性 skill 或脚本
+- Add a cross-repository state synchronization rule to the control repository
+- Add a golden regression case verifying enterprise visibility after clock-in
+- Document the root cause and feedback action in `postmortem.md`
+- Add a task-specific skill or script to check synchronization fields
 
-## 12. 使用建议
+## 12. Usage recommendations
 
-- 先复制本模板，再根据具体模块裁剪
-- 不要把所有字段都留空后直接进业务仓开发
-- 原型仓如果尚未工程化，先在 `impact.yaml` 和 `execution.yaml` 中显式标明“规划态”
+- Copy this template first, then adapt it to the specific module
+- Do not leave all fields empty and immediately begin business-repository development
+- If a prototype repository lacks an executable project, explicitly mark it as planning-stage in `impact.yaml` and `execution.yaml`

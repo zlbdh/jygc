@@ -9,36 +9,36 @@ last_reviewed: 2026-03-31
 source_of_truth: control-repo
 ---
 
-# 命名规范
+# Naming conventions
 
-## 1. 变更单 ID
+## 1. Change record ID
 
-统一格式：
+Standard format:
 
 ```text
 CHG-YYYY-NNNN-slug
 ```
 
-示例：
+Examples:
 
 ```text
 CHG-2026-0001-bootstrap-harness
 CHG-2026-0102-platform-order-routing
 ```
 
-说明：
+Notes:
 
-- `YYYY`：年份
-- `NNNN`：四位流水号
-- `slug`：小写英文和连字符
+- `YYYY`: Year
+- `NNNN`: Four-digit sequence number
+- `slug`: Lowercase English letters and hyphens
 
-## 2. 变更目录命名
+## 2. Change directory naming
 
-目录名必须与 `change-id` 完全一致。
+The directory name must exactly match `change-id`.
 
-## 3. 任务卡命名
+## 3. Task card naming
 
-固定使用仓库 ID：
+Use repository IDs consistently:
 
 - `backend.md`
 - `web-portal.md`
@@ -48,23 +48,23 @@ CHG-2026-0102-platform-order-routing
 - `mobile-c.md`
 - `miniapp.md`
 
-## 4. 评测用例命名
+## 4. Evaluation case naming
 
-统一格式：
+Standard format:
 
 ```text
-<domain>-<编号>-<slug>.md
+<domain>-<number>-<slug>.md
 ```
 
-建议：
+Recommendations:
 
 - `WEB-001-platform-approval-sync.md`
 - `API-001-platform-order-routing.md`
 - `MOB-001-enterprise-todo-visible.md`
 
-## 5. 发布单命名
+## 5. Release record naming
 
-统一格式：
+Standard format:
 
 ```text
 REL-YYYY-NNNN.md

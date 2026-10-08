@@ -8,31 +8,31 @@ last_reviewed: 2026-03-31
 source_of_truth: control-repo
 ---
 
-# 变更生命周期
+# Change lifecycle
 
-每个变更单按以下状态推进：
+Each change record progresses through these states:
 
 1. `draft`
-   - 只有基本背景，还未完成影响分析
+   - Only basic background is available; impact analysis is incomplete
 2. `analyzing`
-   - 正在补 `impact.yaml`、`design.md` 和 `execution.yaml`
+   - Completing `impact.yaml`, `design.md`, and `execution.yaml`
 3. `planned`
-   - 任务卡已拆完，可以进入各仓执行
+   - Task cards are complete; repository execution may begin
 4. `implementing`
-   - 至少一个业务仓已开工
+   - Work has started in at least one business repository
 5. `verifying`
-   - 各仓自测完成，正在做跨端验收
+   - Repository self-tests are complete; cross-platform acceptance is underway
 6. `ready-for-review`
-   - 已形成发布结论，等待人工审查
+   - A release conclusion is ready for human review
 7. `released`
-   - 已发布并完成记录
+   - Released and documented
 8. `closed`
-   - 复盘完成，生命周期结束
+   - Postmortem complete; lifecycle closed
 
-## 状态推进规则
+## State transition rules
 
-- 没有 `impact.yaml`，不能从 `draft` 进入 `planned`
-- 没有 `execution.yaml`，不能从 `draft` 进入 `planned`
-- 没有任务卡，不能从 `analyzing` 进入 `planned`
-- 没有验收结果，不能进入 `ready-for-review`
-- 没有发布或放弃结论，不能 `closed`
+- Do not move from `draft` to `planned` without `impact.yaml`
+- Do not move from `draft` to `planned` without `execution.yaml`
+- Do not move from `analyzing` to `planned` without task cards
+- Do not enter `ready-for-review` without acceptance results
+- Do not enter `closed` without a release or abandonment conclusion

@@ -1,38 +1,30 @@
-# Agent / Workflow / Skill / MCP 清单
+# Agent / Workflow / Skill / MCP Inventory
 
-## 1. 当前已有能力与短板
+## 1. Current capabilities and gaps
 
-### 1.1 Agent
+### 1.1 Agents
 
-- 当前平台内置的是主代理，以及可派生的 `default / explorer / worker` 三类子代理能力
-- 当前控制仓已经具备项目级逻辑 Agent 角色，并新增了机器可读的 [agent-registry.yaml](config/agent-registry.yaml)
-- 当前仍然**没有平台级自定义新 agent 类型**，项目角色通过 registry 映射到现有运行体
-- 当前短板不再是“没有 Agent 角色”，而是**还没有长期线程服务和自动锁服务**
+- The platform provides a primary agent and three subagent capabilities: `default / explorer / worker`.
+- The control repository defines logical project roles in the machine-readable [agent-registry.yaml](config/agent-registry.yaml).
+- There are still **no new custom platform-level agent types**. The registry maps project roles to existing runtimes.
+- Roles are now available; the remaining gaps are **persistent thread services and automated locking**.
 
-### 1.2 Workflow
+### 1.2 Workflows
 
-当前已经落地的 workflow 有：
+The following workflows are implemented:
 
-- `workspace-baseline-workflow`
-  - `clone -> sync -> discover -> baseline`
-- `change-intake-workflow`
-  - `change-id -> brief -> execution`
-- `impact-design-workflow`
-  - `brief -> impact -> design -> execution`
-- `task-splitting-workflow`
-  - `impact/design -> tasks -> repo owner`
-- `repo-execution-workflow`
-  - `任务卡 -> 分仓执行 -> 仓内验证`
-- `cross-repo-acceptance-workflow`
-  - `acceptance -> verification/result`
-- `release-governance-workflow`
-  - `release-note -> rollback -> observe`
-- `knowledge-feedback-workflow`
-  - `postmortem -> rules/templates/evals/skills`
+- `workspace-baseline-workflow`: `clone -> sync -> discover -> baseline`
+- `change-intake-workflow`: `change-id -> brief -> execution`
+- `impact-design-workflow`: `brief -> impact -> design -> execution`
+- `task-splitting-workflow`: `impact/design -> tasks -> repo owner`
+- `repo-execution-workflow`: task card -> repository execution -> repository verification
+- `cross-repo-acceptance-workflow`: `acceptance -> verification/result`
+- `release-governance-workflow`: `release-note -> rollback -> observe`
+- `knowledge-feedback-workflow`: `postmortem -> rules/templates/evals/skills`
 
 ### 1.3 Skills
 
-当前会话可用系统技能：
+System skills available in the documented session:
 
 - `security-best-practices`
 - `imagegen`
@@ -41,7 +33,7 @@
 - `skill-creator`
 - `skill-installer`
 
-当前业务仓已存在的项目技能：
+Existing project skills in business repositories:
 
 - `mobile-a`
   - `api-integration-workflow`
@@ -57,72 +49,72 @@
   - `ui-ux-pro-max`
   - `miniapp-generator`
 
-当前业务仓还存在不少 `.agent/rules` 文件，尤其 `mobile-a` 的业务规则最丰富，但这些规则目前仍然**分散在业务仓内**。
+Business repositories also contain many `.agent/rules` files. `mobile-a` has especially extensive business rules, but these rules remain **distributed across individual repositories**.
 
 ### 1.4 MCP
 
-当前状态：
+Current status:
 
-- 没有任何 MCP 资源
-- 没有任何 MCP 模板
+- No MCP resources
+- No MCP templates
 
-这意味着当前的上下文仍然主要来自：
+Context therefore still comes primarily from:
 
-- 本地文件系统
-- 控制仓脚本
-- 终端输出
+- The local filesystem
+- Control-repository scripts
+- Terminal output
 
-## 2. 当前阶段应该补的 Agent
+## 2. Agent capabilities to add at this stage
 
-| Agent | 负责范围 | 不负责 |
-|------|----------|--------|
-| `change-intake-agent` | 把模糊需求整理成 `brief.md` | 不直接改业务代码 |
-| `impact-design-agent` | 生成 `impact.yaml` 和轻量 `design.md` | 不直接做发布结论 |
-| `backend-agent` | 只负责 `backend` | 不越界改 Web / Mobile |
-| `web-agent` | 只负责 `web-portal`、`admin-web` | 不越界改 Backend / Mobile |
-| `mobile-agent` | 只负责 `mobile-a`、`mobile-b` | 当前不默认接 `mobile-c` |
-| `verification-agent` | 汇总仓内验证、基线报告、验收记录 | 不替代实现 Agent |
-| `release-agent` | 生成发布单、回滚单、发布顺序 | 不决定业务是否正确 |
-| `knowledge-agent` | 把问题回灌到规则、模板、回归和 skills | 不替代发布动作 |
+| Agent | Responsibilities | Outside its responsibilities |
+|-------|------------------|------------------------------|
+| `change-intake-agent` | Turn unclear requests into `brief.md` | Direct business-code changes |
+| `impact-design-agent` | Produce `impact.yaml` and lightweight `design.md` | Direct release conclusions |
+| `backend-agent` | `backend` only | Web / mobile changes |
+| `web-agent` | `web-portal`, `admin-web` only | Backend / mobile changes |
+| `mobile-agent` | `mobile-a`, `mobile-b` only | `mobile-c` by default at this stage |
+| `verification-agent` | Consolidate repository checks, baselines, and acceptance records | Replacing implementation agents |
+| `release-agent` | Produce release records, rollback records, and release order | Deciding business correctness |
+| `knowledge-agent` | Feed problems back into rules, templates, regression cases, and skills | Performing releases |
 
-## 3. 当前阶段应该补的 Workflow
+## 3. Workflow capabilities to add at this stage
 
-| Workflow | 主要输入 | 主要输出 |
-|---------|---------|---------|
-| `workspace-baseline-workflow` | `repos.yaml` | 契约发现报告、基线矩阵 |
-| `change-intake-workflow` | 原始需求、bug、事故 | `brief.md`、`impact.yaml` |
-| `repo-execution-workflow` | `tasks/*.md` | 代码改动、仓内验证结果 |
+| Workflow | Main inputs | Main outputs |
+|----------|-------------|--------------|
+| `workspace-baseline-workflow` | `repos.yaml` | Contract discovery reports, baseline matrix |
+| `change-intake-workflow` | Original requests, bugs, incidents | `brief.md`, `impact.yaml` |
+| `repo-execution-workflow` | `tasks/*.md` | Code changes, repository verification results |
 | `cross-repo-acceptance-workflow` | `acceptance.md` | `verification/result.md` |
-| `release-governance-workflow` | 验收结果、分支、配置变更 | 发布单、回滚步骤、观察点 |
-| `knowledge-feedback-workflow` | 问题、事故、返工 | `postmortem.md`、新规则、新回归 |
+| `release-governance-workflow` | Acceptance results, branches, configuration changes | Release records, rollback steps, monitoring points |
+| `knowledge-feedback-workflow` | Problems, incidents, rework | `postmortem.md`, new rules, new regression cases |
 
-## 4. 当前阶段应该补的控制仓级 Skills
+## 4. Control-repository skills to add at this stage
 
-这些 skills 已在控制仓 `.agent/skills/` 中建骨架，目标是优先补**流程型能力**：
+These skills have scaffolding under `.agent/skills/`. Prioritize **workflow capabilities**:
 
-| Skill | 触发场景 | 主要输出 |
-|------|----------|---------|
-| `change-intake` | 需求刚进入控制仓 | `brief.md` 草稿 |
-| `cross-repo-impact` | 需要判断影响哪些仓 | `impact.yaml` 草稿 |
-| `task-card-generator` | 需要按仓拆任务 | `tasks/*.md` |
-| `local-baseline-triage` | 需要读基线报告 | 问题归因与下一步动作 |
-| `cross-repo-acceptance-recorder` | 需要补验收记录 | `acceptance.md` / `verification/result.md` |
-| `release-package-generator` | 需要形成发布单 | `release-note` / 回滚清单 |
-| `memory-router` | 需要决定先读哪些事实源 | 记忆路由清单、事实源顺序、缺口列表 |
-| `rule-resolver` | 需要判断适用规则及优先级 | 规则优先级结果、冲突点、待确认项 |
-| `postmortem-to-regression` | 需要把事故转成改进项 | 新回归、新规则、新模板、新 skill 候选 |
+| Skill | Trigger | Main output |
+|-------|---------|-------------|
+| `change-intake` | A request enters the control repository | Draft `brief.md` |
+| `cross-repo-impact` | Identify affected repositories | Draft `impact.yaml` |
+| `task-card-generator` | Break tasks down by repository | `tasks/*.md` |
+| `local-baseline-triage` | Interpret baseline reports | Root-cause assessment and next actions |
+| `cross-repo-acceptance-recorder` | Complete acceptance records | `acceptance.md` / `verification/result.md` |
+| `release-package-generator` | Prepare a release record | `release-note` / rollback checklist |
+| `memory-router` | Decide which sources of truth to read first | Memory routing list, source order, gap list |
+| `rule-resolver` | Determine applicable rules and precedence | Precedence results, conflicts, confirmation items |
+| `postmortem-to-regression` | Turn incidents into improvements | New regressions, rules, templates, or skill candidates |
 
-## 2. 当前与目标 Agent 架构
+## 2. Current and target agent architecture
 
-### 2.1 当前已知库存
+### 2.1 Current inventory
 
-- 平台层：主代理 + `default / explorer / worker`
-- 控制仓层：角色定义、[agent-registry.yaml](config/agent-registry.yaml) 和本地 `dispatch-change / run-role / review-worker-output` 已落地
-- 当前还没有长期线程服务、自动锁服务和 App Server 形态 runtime
+- Platform layer: primary agent + `default / explorer / worker`
+- Control-repository layer: role definitions, [agent-registry.yaml](config/agent-registry.yaml), and local `dispatch-change / run-role / review-worker-output`
+- Still absent: persistent thread services, automated locking, and an App Server runtime
 
-### 2.2 当前阶段 v1 Agent
+### 2.2 V1 agents at this stage
 
-治理类：
+Governance:
 
 - `change-intake-agent`
 - `impact-design-agent`
@@ -130,7 +122,7 @@
 - `release-agent`
 - `knowledge-agent`
 
-执行类：
+Execution:
 
 - `backend-exec-agent`
 - `web-exec-agent`
@@ -138,77 +130,77 @@
 - `mobile-a-exec-agent`
 - `mobile-b-exec-agent`
 
-原型类：
+Prototypes:
 
 - `mobile-c-planning-agent`
 - `miniapp-planning-agent`
 
-### 2.3 长期 v2 Agent
+### 2.3 Long-term V2 agents
 
-- 线程持久化驱动的调度 Agent
-- 锁服务与 worktree 服务
-- 兼容矩阵与能力注册表
-- 真实跨仓验收自动化 Agent
+- Scheduling agents driven by persistent threads
+- Lock and worktree services
+- Compatibility matrices and capability registries
+- Agents that automate actual cross-repository acceptance
 
-## 3. 记忆与调用模型
+## 3. Memory and invocation model
 
-### 3.1 记忆分层
+### 3.1 Memory layers
 
-- 仓库产物：长期记忆
-- 线程对话：短期记忆
-- `reports/`：验证证据记忆
-- `postmortem.md`：负面记忆
-- MCP：外部只读上下文
-- Skills：过程记忆 / 执行配方
+- Repository artifacts: long-term memory
+- Thread conversations: short-term memory
+- `reports/`: verification evidence
+- `postmortem.md`: failure memory
+- MCP: external, read-only context
+- Skills: procedural memory / execution procedures
 
-### 3.2 调用关系
+### 3.2 Invocation flow
 
-`用户/产品 -> 控制仓 workflow -> 治理 Agent -> repo 任务卡 -> 执行 Agent -> 验证 Agent -> 发布 Agent -> 知识回灌`
+`User/product -> control-repository workflow -> governance agent -> repository task card -> execution agent -> verification agent -> release agent -> knowledge feedback`
 
-### 3.3 并发原则
+### 3.3 Concurrency principles
 
-- 读共享：多个 Agent 可同时读同一 skill、同一规则文档、同一只读 MCP
-- 写独占：同一时间只允许一个 Agent 写一个控制仓主产物，或写一个业务仓
-- 共享事实必须带快照：报告、提交、分支、环境和时间戳
+- Shared reads: multiple agents may read the same skill, rule document, or read-only MCP service.
+- Exclusive writes: only one agent may write a primary control-repository artifact or business repository at a time.
+- Shared facts require snapshots: reports, commits, branches, environments, and timestamps.
 
-### 3.4 当前冲突点
+### 3.4 Current conflict risks
 
-- 多个 Agent 同写 `impact.yaml`
-- 多个 Agent 同写 `verification/result.md`
-- 多个 Agent 共享一个可写 worktree
-- skill 指令覆盖 repo 规则
-- 无来源的 MCP 结果被误当成发布依据
+- Multiple agents writing `impact.yaml`
+- Multiple agents writing `verification/result.md`
+- Multiple agents sharing a writable worktree
+- Skill instructions overriding repository rules
+- Unsourced MCP results being treated as release evidence
 
-## 4. 当前阶段应该补的 MCP
+## 4. MCP capabilities to add at this stage
 
-当前阶段只允许设计和接入**只读、非生产**的 MCP：
+Design and integrate only **read-only, nonproduction** MCP services:
 
-| MCP | 目的 | 当前状态 |
-|-----|------|---------|
-| `db-schema-readonly` | 看表结构、字段、索引 | 蓝图已规划，未接入 |
-| `api-contract-readonly` | 统一暴露接口契约和样例 | 蓝图已规划，未接入 |
-| `config-readonly` | 只读开发/测试配置映射 | 蓝图已规划，未接入 |
-| `observability-readonly` | 只读开发/测试日志与 trace | 蓝图已规划，未接入 |
+| MCP | Purpose | Current status |
+|-----|---------|----------------|
+| `db-schema-readonly` | Inspect tables, fields, and indexes | Blueprint planned; not integrated |
+| `api-contract-readonly` | Provide shared API contracts and examples | Blueprint planned; not integrated |
+| `config-readonly` | Read development/test configuration mappings | Blueprint planned; not integrated |
+| `observability-readonly` | Read development/test logs and traces | Blueprint planned; not integrated |
 
-不允许接入：
+Do not integrate:
 
-- 生产数据库 MCP
-- 生产配置中心 MCP
-- 生产 Redis / MQ MCP
-- 任何默认带写权限的 MCP
+- Production database MCP
+- Production configuration-center MCP
+- Production Redis / MQ MCP
+- Any MCP service with default write access
 
-MCP 目录统一记录在：
+Record MCP integrations in:
 
 - [mcp/catalog.yaml](mcp/catalog.yaml)
 - [standards/global/mcp-safety.md](standards/global/mcp-safety.md)
 
-## 5. 当前阶段的优先级
+## 5. Priorities at this stage
 
-当前阶段的重点不是继续发明更多 Agent，而是先让：
+Prioritize these practical capabilities before defining more agents:
 
-- Agent 有边界
-- Workflow 有入口
-- Skills 有明确触发场景
-- MCP 有只读、非生产的接入策略
+- Clear agent boundaries
+- Workflow entry points
+- Explicit skill triggers
+- Read-only, nonproduction MCP integration policies
 
-它们都服务于同一条受控研发流程。
+All of them support the same controlled development workflow.

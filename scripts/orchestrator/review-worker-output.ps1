@@ -68,13 +68,13 @@ function Normalize-ReviewResponse {
 
     return [pscustomobject]@{
         status = 'blocked'
-        summary = 'review worker 最终输出未能解析为结构化 JSON，请人工检查。'
+        summary = 'The final review-worker output could not be parsed as structured JSON. Inspect it manually.'
         scope_check = 'unknown'
         task_alignment = 'unknown'
         verification_check = 'unknown'
         needs_rework = $true
-        findings = @('review 输出格式不合法，需人工复核。')
-        next_action = '请人工检查 raw_response，并视情况重跑 review worker。'
+        findings = @('Invalid review output format. Manual review is required.')
+        next_action = 'Inspect raw_response manually and rerun the review worker if needed.'
         exit_code = $ExitCode
         raw_response = $RawResponse
     }
@@ -87,7 +87,8 @@ function Test-HarnessReviewRuntimeBlockedMessage {
         return $false
     }
 
-    return $Text -match 'usage limit|runtime / usage limit|运行资源阻断|外部 runtime|try again at|hit your usage limit|resource limit'
+    # Match English diagnostics and retain legacy Chinese diagnostics from external tools.
+    return $Text -match 'external runtime|usage limit|runtime / usage limit|运行资源阻断|外部 runtime|try again at|hit your usage limit|resource limit'
 }
 
 function Test-HarnessReviewEnvironmentBlockedMessage {
@@ -97,7 +98,8 @@ function Test-HarnessReviewEnvironmentBlockedMessage {
         return $false
     }
 
-    return $Text -match 'EACCES|未安装到本地可执行路径|缺少 .+ 可执行文件|is not recognized as an internal or external command|依赖阻断|本地依赖'
+    # Match English diagnostics and retain legacy Chinese diagnostics from external tools.
+    return $Text -match 'dependency block|local dependencies|EACCES|未安装到本地可执行路径|缺少 .+ 可执行文件|is not recognized as an internal or external command|依赖阻断|本地依赖'
 }
 
 function Test-MobileSafeAreaFixed {
@@ -254,16 +256,16 @@ function Get-DeterministicReviewResponse {
     ) {
         return [pscustomobject]@{
             status = 'blocked'
-            summary = 'review wrapper 判定：快照同步已生效，但 repo worker 本轮被外部 runtime / usage limit 阻断；当前不能宣布单仓 no-hand-code 真正通过。'
+            summary = 'Review-wrapper conclusion: snapshot synchronization is effective, but this repository-worker run is blocked by an external runtime / usage limit. The single-repository no-hand-code workflow cannot yet be declared passed.'
             scope_check = 'pass'
             task_alignment = 'pass'
             verification_check = 'blocked_by_runtime'
             needs_rework = $false
             findings = @(
-                '当前阻断来自外部 runtime / usage limit，而不是 write scope 内实现失败。',
-                '待 runtime 恢复后，应在同一 source_dirty_tracked worktree 基线上重跑 repo worker。'
+                'The blocker is an external runtime / usage limit, not an implementation failure within the write scope.',
+                'When the runtime recovers, rerun the repository worker on the same source_dirty_tracked worktree baseline.'
             )
-            next_action = '交由 verification-agent 记为外部运行资源阻断，并在 runtime 恢复后优先重跑当前 repo worker。'
+            next_action = 'Have verification-agent record an external runtime resource block and prioritize rerunning this repository worker when the runtime recovers.'
             exit_code = 0
             raw_response = 'deterministic-local-review'
         }
@@ -275,16 +277,16 @@ function Get-DeterministicReviewResponse {
     ) {
         return [pscustomobject]@{
             status = 'blocked'
-            summary = 'review wrapper 判定：repo worker 已在 write scope 内真实改代码，但当前 worktree 缺少本地依赖，验证命令被环境/依赖问题阻断；当前不能宣布单仓 no-hand-code 真正通过。'
+            summary = 'Review-wrapper conclusion: the repository worker made actual code changes within the write scope, but missing local worktree dependencies block verification commands. The single-repository no-hand-code workflow cannot yet be declared passed.'
             scope_check = 'pass'
             task_alignment = 'pass'
             verification_check = 'blocked_by_environment'
             needs_rework = $false
             findings = @(
-                '当前阻断来自 worktree 内本地依赖缺失或受限拉取，而不是 write scope 内实现失败。',
-                '在继续重跑前，应先确保当前 source/worktree 具备可用的 `eslint` / `expo` 本地依赖。'
+                'The blocker is missing local worktree dependencies or restricted dependency downloads, not an implementation failure within the write scope.',
+                'Before rerunning, ensure the current source/worktree has usable local `eslint` / `expo` dependencies.'
             )
-            next_action = '交由 verification-agent 记为环境/依赖阻断；待当前 worktree 具备可用本地依赖后，再重跑 repo worker 与 review worker。'
+            next_action = 'Have verification-agent record an environment/dependency block. Rerun the repository worker and review worker after usable local dependencies are available in the worktree.'
             exit_code = 0
             raw_response = 'deterministic-local-review'
         }
@@ -330,13 +332,13 @@ function Get-DeterministicReviewResponse {
     if ($hasRepoLintPass -and $hasExpoPass -and $safeAreaFixed) {
         return [pscustomobject]@{
             status = 'approved'
-            summary = 'review wrapper 已根据当前 diff、worker result 和验证命令结果完成复核，本轮 repo worker 结果通过。'
+            summary = 'The review wrapper checked the current diff, worker result, and verification command results. This repository-worker run passed.'
             scope_check = 'pass'
             task_alignment = 'pass'
             verification_check = 'pass'
             needs_rework = $false
             findings = @()
-            next_action = '交由 verification-agent 汇总主结论，并更新 acceptance.md 与 verification/result.md。'
+            next_action = 'Have verification-agent consolidate the main conclusion and update acceptance.md and verification/result.md.'
             exit_code = 0
             raw_response = 'deterministic-local-review'
         }
@@ -346,15 +348,15 @@ function Get-DeterministicReviewResponse {
     if ($scopedLintPass -and $hasExpoPass -and $safeAreaFixed -and $hasOutOfScopeDebt) {
         return [pscustomobject]@{
             status = 'approved'
-            summary = 'review wrapper 判定：repo worker 已在 write scope 内完成真实代码修改并通过目标文件验证；仓库级 lint 的剩余失败来自 scope 外既有问题，本轮按单仓 no-hand-code V1 协议记为有条件通过。'
+            summary = 'Review-wrapper conclusion: the repository worker made actual code changes within the write scope and passed target-file verification. Remaining repository-wide lint failures are pre-existing issues outside the scope. Record a conditional pass under the single-repository no-hand-code V1 protocol.'
             scope_check = 'pass'
             task_alignment = 'pass'
             verification_check = 'pass_with_external_debt'
             needs_rework = $false
             findings = @(
-                '仓库级 `npm run lint` 仍被 write scope 外历史债阻断，需在单独基线治理波次处理。'
+                'Repository-wide `npm run lint` remains blocked by pre-existing issues outside the write scope. Address them in a separate baseline remediation cycle.'
             )
-            next_action = '交由 verification-agent 记为有条件通过，并把 scope 外 lint 历史债登记为后续治理项。'
+            next_action = 'Have verification-agent record a conditional pass and register pre-existing lint issues outside the scope for later remediation.'
             exit_code = 0
             raw_response = 'deterministic-local-review'
         }
@@ -403,8 +405,8 @@ function Refine-ReviewResponse {
         $Response.verification_check = 'pass'
         $Response.needs_rework = $false
         $Response.findings = @()
-        $Response.summary = 'review wrapper 已根据最新 worker result、验证命令结果和当前文件事实完成复核，本轮 repo worker 结果通过。'
-        $Response.next_action = '交由 verification-agent 汇总跨仓主结论，并更新 acceptance.md 与 verification/result.md。'
+        $Response.summary = 'The review wrapper checked the latest worker result, verification command results, and current file content. This repository-worker run passed.'
+        $Response.next_action = 'Have verification-agent consolidate the main cross-repository conclusion and update acceptance.md and verification/result.md.'
     }
 
     return $Response
@@ -421,16 +423,16 @@ function Convert-ReviewResponseToMarkdown {
         $lines.Add($line)
     }
     $lines.Add('')
-    $lines.Add('## Agent Review 结论')
+    $lines.Add('## Agent review conclusion')
     $lines.Add('')
-    $lines.Add(('- status：`{0}`' -f $Response.status))
-    $lines.Add(('- scope_check：`{0}`' -f $Response.scope_check))
-    $lines.Add(('- task_alignment：`{0}`' -f $Response.task_alignment))
-    $lines.Add(('- verification_check：`{0}`' -f $Response.verification_check))
-    $lines.Add(('- needs_rework：`{0}`' -f $Response.needs_rework))
-    $lines.Add(('- worker exit code：`{0}`' -f $Response.exit_code))
+    $lines.Add(('- status: `{0}`' -f $Response.status))
+    $lines.Add(('- scope_check: `{0}`' -f $Response.scope_check))
+    $lines.Add(('- task_alignment: `{0}`' -f $Response.task_alignment))
+    $lines.Add(('- verification_check: `{0}`' -f $Response.verification_check))
+    $lines.Add(('- needs_rework: `{0}`' -f $Response.needs_rework))
+    $lines.Add(('- worker exit code: `{0}`' -f $Response.exit_code))
     $lines.Add('')
-    $lines.Add('### 摘要')
+    $lines.Add('### Summary')
     $lines.Add('')
     $lines.Add($Response.summary)
     $lines.Add('')
@@ -440,7 +442,7 @@ function Convert-ReviewResponseToMarkdown {
         $lines.Add(('- {0}' -f $finding))
     }
     if (@($Response.findings).Count -eq 0) {
-        $lines.Add('- 暂无。')
+        $lines.Add('- None.')
     }
     $lines.Add('')
     $lines.Add('### Next Action')
@@ -472,7 +474,7 @@ $schemaPath = Join-Path $repoRoot 'schemas\review-response.schema.json'
 
 foreach ($repoId in $targetRepoIds) {
     if (-not $repoMap.ContainsKey($repoId)) {
-        throw "未知仓库：$repoId"
+        throw "Unknown repository: $repoId"
     }
 
     $repoMeta = $repoMap[$repoId]
@@ -487,43 +489,43 @@ foreach ($repoId in $targetRepoIds) {
 
     $changedFiles = Get-GitCommandOutput -RepoPath $repoPath -Command 'git diff --name-only'
     $gitStatus = Get-GitCommandOutput -RepoPath $repoPath -Command 'git status --short'
-    $workerResultContent = if (Test-Path -LiteralPath $workerResultPath) { Get-Content -LiteralPath $workerResultPath -Raw } else { "未发现 worker result：$workerResultRelative" }
+    $workerResultContent = if (Test-Path -LiteralPath $workerResultPath) { Get-Content -LiteralPath $workerResultPath -Raw } else { "Worker result not found: $workerResultRelative" }
 
     $reviewLines = @(
         "# $ChangeId / $repoId Review Packet",
         "",
-        "## 基本信息",
+        "## Basic information",
         "",
-        "- repo：$repoId",
-        "- 当前阶段：$($execution.Stage)",
-        "- review role：verification-agent",
-        "- worker result：$workerResultRelative",
-        "- worktree：$repoPath",
+        "- repo: $repoId",
+        "- Current stage: $($execution.Stage)",
+        "- review role: verification-agent",
+        "- worker result: $workerResultRelative",
+        "- worktree: $repoPath",
         "",
-        "## Worker 回传摘要",
+        "## Worker result summary",
         "",
         ('{0}text' -f $codeFence),
         $workerResultContent.TrimEnd(),
         $codeFence,
         "",
-        "## Git 变更文件",
+        "## Git changed files",
         "",
         ('{0}text' -f $codeFence),
         $changedFiles.TrimEnd(),
         $codeFence,
         "",
-        "## Git 状态",
+        "## Git status",
         "",
         ('{0}text' -f $codeFence),
         $gitStatus.TrimEnd(),
         $codeFence,
         "",
-        "## Review 检查清单",
+        "## Review checklist",
         "",
-        "- 是否越界改动到 write scope 之外的路径",
-        "- 是否运行并记录了本仓最小验证命令",
-        "- 是否与 ``impact.yaml`` / ``design.md`` / ``tasks/$repoId.md`` 一致",
-        "- 是否存在需要回填到 ``verification/result.md`` 的遗留风险"
+        "- Were any paths outside the write scope changed?",
+        "- Were minimum repository verification commands run and recorded?",
+        "- Is the result consistent with ``impact.yaml`` / ``design.md`` / ``tasks/$repoId.md``?",
+        "- Are there remaining risks to record in ``verification/result.md``?"
     )
     $reviewContent = ($reviewLines -join [Environment]::NewLine) + [Environment]::NewLine
 
@@ -545,12 +547,12 @@ foreach ($repoId in $targetRepoIds) {
         }
 
         $promptLines = @(
-            "你是示例产品项目中的 review worker，当前负责 repo `$repoId` 的结构化审查。",
-            "你只能做只读检查，不允许修改任何代码或控制仓文件。",
-            "你需要基于当前 worktree diff、worker result、任务卡一致性来给出结构化结论。",
-            "最终只输出符合 JSON schema 的 JSON，不要附加额外解释。",
+            "You are a review worker for the example product, responsible for the structured review of repository `$repoId`.",
+            "Perform read-only checks only. Do not modify code or control-repository files.",
+            "Provide a structured conclusion based on the current worktree diff, worker result, and consistency with the task card.",
+            "Return only JSON matching the JSON schema, without additional explanation.",
             "",
-            "下面是 review packet：",
+            "Review packet:",
             "",
             $reviewContent
         )
@@ -589,15 +591,15 @@ foreach ($repoId in $targetRepoIds) {
         $runtimeBlocked = $false
         if (($reviewExitCode -ne 0) -and [string]::IsNullOrWhiteSpace($rawResponse)) {
             $normalized.status = 'blocked'
-            $normalized.summary = 'review worker 未返回结构化 JSON，当前按外部 runtime / usage limit 阻断处理。'
+            $normalized.summary = 'The review worker returned no structured JSON. Treat this as an external runtime / usage limit block.'
             $normalized.scope_check = 'unknown'
             $normalized.task_alignment = 'unknown'
             $normalized.verification_check = 'blocked_by_runtime'
             $normalized.needs_rework = $false
             $normalized.findings = @(
-                'review worker 未返回结构化结果，疑似被外部 runtime / usage limit 阻断。'
+                'The review worker returned no structured result and may be blocked by an external runtime / usage limit.'
             )
-            $normalized.next_action = '待 runtime 恢复后重跑 review worker；当前先由 verification-agent 记为外部运行资源阻断。'
+            $normalized.next_action = 'Rerun the review worker when the runtime recovers. For now, have verification-agent record an external runtime resource block.'
             $runtimeBlocked = $true
         }
         $normalized = Refine-ReviewResponse -Response $normalized -ChangeId $ChangeId -RepoId $repoId -RepoPath $repoPath -WorkerResponseJsonPath $workerResponseJsonPath -AllowedPaths $allowedPaths
@@ -606,7 +608,7 @@ foreach ($repoId in $targetRepoIds) {
         Write-HarnessTextFile -Path $reviewPath -Content $finalReviewContent
 
 if (($reviewExitCode -ne 0) -and ($null -eq $parsedResponse) -and (-not $runtimeBlocked) -and ($normalized.status -eq 'failed')) {
-            throw "review worker 执行失败：$ChangeId/$repoId（exit code=$reviewExitCode）"
+            throw "review Worker execution failed: $ChangeId/$repoId (exit code=$reviewExitCode)"
         }
     }
 
@@ -625,7 +627,7 @@ Write-HarnessJsonFile -Path $summaryPath -Data ([pscustomobject]@{
     repos = $summary
 })
 
-Write-Host "Review packet 已生成：$ChangeId" -ForegroundColor Green
+Write-Host "Review packet generated: $ChangeId" -ForegroundColor Green
 foreach ($item in $summary) {
     Write-Host ("  - {0}: {1}" -f $item.repo_id, $item.review_path) -ForegroundColor Cyan
 }

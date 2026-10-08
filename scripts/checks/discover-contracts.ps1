@@ -56,7 +56,7 @@ function Discover-RepoContract {
             package_scripts = @()
             frameworks = @()
             suggested_commands = [pscustomobject]$suggestedCommands
-            findings = @('本地仓库尚未克隆。')
+            findings = @('The repository has not been cloned locally.')
         }
     }
 
@@ -110,7 +110,7 @@ function Discover-RepoContract {
                 $suggestedStatus = 'baseline-ready'
             } else {
                 $suggestedStatus = 'missing-contract'
-                $findings.Add('缺少 pom.xml。')
+                $findings.Add('pom.xml is missing.')
             }
         }
         'web-vite' {
@@ -131,13 +131,13 @@ function Discover-RepoContract {
 
                 if ([string]::IsNullOrWhiteSpace($suggestedCommands.build)) {
                     $suggestedStatus = 'missing-contract'
-                    $findings.Add('未发现 build/build:prod 脚本。')
+                    $findings.Add('No build/build:prod script was found.')
                 } else {
                     $suggestedStatus = 'baseline-ready'
                 }
             } else {
                 $suggestedStatus = 'missing-contract'
-                $findings.Add('缺少 package.json。')
+                $findings.Add('package.json is missing.')
             }
         }
         'mobile-rn' {
@@ -160,16 +160,16 @@ function Discover-RepoContract {
 
                 if ([string]::IsNullOrWhiteSpace($suggestedCommands.typecheck) -and [string]::IsNullOrWhiteSpace($suggestedCommands.test)) {
                     $suggestedStatus = 'missing-contract'
-                    $findings.Add('未发现 typecheck/test 脚本。')
+                    $findings.Add('No typecheck/test script was found.')
                 } else {
                     $suggestedStatus = 'baseline-ready'
                     if ($packageScripts -notcontains 'typecheck') {
-                        $findings.Add('未发现 typecheck，已回退为 lint/test 基线。')
+                        $findings.Add('No typecheck script was found; using the lint/test baseline instead.')
                     }
                 }
             } else {
                 $suggestedStatus = 'missing-contract'
-                $findings.Add('缺少 package.json。')
+                $findings.Add('package.json is missing.')
             }
         }
         'miniapp' {
@@ -184,20 +184,20 @@ function Discover-RepoContract {
 
                 if ([string]::IsNullOrWhiteSpace($suggestedCommands.build)) {
                     $suggestedStatus = 'missing-contract'
-                    $findings.Add('未发现小程序构建脚本。')
+                    $findings.Add('No miniapp build script was found.')
                 } else {
                     $suggestedStatus = 'missing-local-env'
-                    $findings.Add('需补充微信开发者工具或等价本地环境。')
+                    $findings.Add('Install WeChat DevTools or an equivalent local environment.')
                 }
             } else {
                 $suggestedStatus = 'missing-contract'
-                $findings.Add('缺少小程序关键配置文件。')
+                $findings.Add('Required miniapp configuration files are missing.')
             }
         }
     }
 
     if ($gitExists -eq $false) {
-        $findings.Add('目录存在但不是 git 仓库。')
+        $findings.Add('The directory exists but is not a Git repository.')
     }
 
     return [pscustomobject]@{
@@ -231,22 +231,22 @@ if (-not $NoReport) {
     $mdPath = Join-Path $reportDir ($timestamp + '-contracts.md')
 
     $lines = @(
-        '# 契约发现报告',
+        '# Contract discovery reports',
         '',
-        "| 仓库 | 配置状态 | 建议状态 | Manifest | 关键脚本 | 发现 |",
+        "| Repository | Configured status | Recommended status | Manifest | Key scripts | Findings |",
         "|------|----------|----------|----------|----------|------|"
     )
 
     foreach ($item in $results) {
-        $manifests = if ($item.manifests.Count -gt 0) { ($item.manifests -join ', ') } else { '无' }
-        $scripts = if ($item.package_scripts.Count -gt 0) { ($item.package_scripts -join ', ') } else { '无' }
-        $findingsText = if ($item.findings.Count -gt 0) { ($item.findings -join '；') } else { '无' }
+        $manifests = if ($item.manifests.Count -gt 0) { ($item.manifests -join ', ') } else { 'None' }
+        $scripts = if ($item.package_scripts.Count -gt 0) { ($item.package_scripts -join ', ') } else { 'None' }
+        $findingsText = if ($item.findings.Count -gt 0) { ($item.findings -join '; ') } else { 'None' }
         $lines += "| $($item.id) | $($item.configured_status) | $($item.suggested_status) | $manifests | $scripts | $findingsText |"
     }
 
     Write-HarnessJsonFile -Path $jsonPath -Data $results
     Write-HarnessTextFile -Path $mdPath -Content ($lines -join [Environment]::NewLine)
-    Write-Host "已输出契约发现报告：" -ForegroundColor Green
+    Write-Host "Generated contract discovery reports: " -ForegroundColor Green
     Write-Host "  - $mdPath"
     Write-Host "  - $jsonPath"
 }

@@ -1,23 +1,23 @@
 # config-readonly
 
-## 目标
+## Goals
 
-只读查看开发或测试环境的配置映射，降低“本地能跑、联调失败”的不透明度。
+Inspect development or test configuration mappings through read-only access to diagnose cases that work locally but fail during integration.
 
-## 允许能力
+## Allowed capabilities
 
-- 读取环境变量映射
-- 读取 Nacos 配置项
-- 查看服务间地址、开关、命名空间
+- Read environment-variable mappings
+- Read Nacos configuration entries
+- Inspect interservice addresses, feature switches, and namespaces
 
-## 禁止能力
+## Prohibited capabilities
 
-- 修改配置
-- 发布配置
-- 连接生产配置中心
+- Modifying configuration
+- Publishing configuration
+- Connecting to production configuration services
 
-## 适用场景
+## Use cases
 
-- 做环境差异排查
-- 生成发布单的配置变更说明
-- 确认联调前置条件
+- Investigating environment differences
+- Documenting configuration changes in release records
+- Confirming integration prerequisites

@@ -1,50 +1,50 @@
-# 规则优先级
+# Rule Precedence
 
-## 1. 为什么需要优先级
+## 1. Why precedence is needed
 
-当前示例产品存在多层规则：
+The example product has several rule layers:
 
-- 全局规则
-- 控制仓规则
-- 业务仓规则
-- 模块规则
-- Skill 配方
-- 风格偏好
+- Global rules
+- Control-repository rules
+- Business-repository rules
+- Module rules
+- Skill procedures
+- Style preferences
 
-如果不先定义优先级，冲突时就会出现“谁最后说了算不明确”的问题。
+Defined precedence makes the controlling rule clear when these layers conflict.
 
-## 2. 统一优先级
+## 2. Shared precedence order
 
-规则优先级固定为：
+Apply rules in this order:
 
-1. 安全 / 环境规则  
-2. 变更合同：`brief / impact / execution / design / tasks`  
-3. 跨仓架构与发布门禁  
-4. 业务仓规则  
-5. 模块规则 / 示例实现  
-6. Skill 配方  
-7. 风格偏好  
+1. Safety / environment rules
+2. Change contract: `brief / impact / execution / design / tasks`
+3. Cross-repository architecture and release gates
+4. Business-repository rules
+5. Module rules / example implementations
+6. Skill procedures
+7. Style preferences
 
-解释：
+Interpretation:
 
-- 高优先级覆盖低优先级
-- Skill 不能覆盖 repo rule
-- repo rule 不能覆盖安全和发布门禁
-- 风格偏好永远不能推翻功能和安全边界
+- Higher-priority rules override lower-priority rules.
+- Skills cannot override repository rules.
+- Repository rules cannot override safety or release gates.
+- Style preferences never override functional or safety boundaries.
 
-## 3. 冲突处理
+## 3. Conflict resolution
 
-发现冲突时按以下顺序处理：
+When rules conflict:
 
-1. 先定位冲突双方属于哪一层
-2. 先执行更高优先级规则
-3. 如果是同级冲突，不允许“猜一个执行”
-4. 必须把冲突写进 `design.md` 或 `impact.yaml` 的 `待确认`
-5. 只有确认后，才能继续进入实现和发布
+1. Identify the layer of each conflicting rule.
+2. Follow the higher-priority rule.
+3. Do not guess when rules have equal priority.
+4. Record the conflict under `Needs confirmation` in `design.md` or `impact.yaml`.
+5. Continue implementation or release only after confirmation.
 
-## 4. 规则元信息
+## 4. Rule metadata
 
-控制仓规则文档统一采用以下元信息：
+Control-repository rule documents use these metadata fields:
 
 - `scope`
 - `owner`
@@ -53,19 +53,19 @@
 - `last_reviewed`
 - `source_of_truth`
 
-这些元信息用于回答 4 个问题：
+They answer four questions:
 
-- 这条规则管什么
-- 谁负责维护
-- 它对哪些仓或哪些流程生效
-- 它和其他规则冲突时优先级是多少
+- What does the rule govern?
+- Who maintains it?
+- Which repositories or workflows does it apply to?
+- What precedence does it have when another rule conflicts?
 
-## 5. 当前阶段适用范围
+## 5. Scope at this stage
 
-v1 先要求：
+V1 requires:
 
-- 控制仓内 `standards/` 规则统一补齐元信息
-- 控制仓只维护跨仓规则和门禁
-- 业务仓内已有规则保持原地，后续逐步补元信息
+- Complete metadata for all control-repository rules under `standards/`.
+- The control repository maintains only cross-repository rules and gates.
+- Existing business-repository rules stay in place, with metadata added gradually.
 
-控制仓不复制业务仓事实，只维护索引与路由。
+The control repository maintains indexes and routing rather than copying business-repository facts.

@@ -1,32 +1,32 @@
-# {{CHANGE_ID}} 复盘记录
+# {{CHANGE_ID}} Postmortem record
 
-## 事件概览
+## Incident overview
 
-- 变更标题：{{TITLE}}
-- 触发类型：
-- 发生时间：
-- 责任范围：
+- Change title: {{TITLE}}
+- Trigger type:
+- Occurred at:
+- Responsibility scope:
 
-## 发生了什么
+## What happened
 
-- 
+-
 
-## 根因分析
+## Root cause analysis
 
-- 
+-
 
-## 流程哪里挡住了 / 没挡住
+## Where the process caught or missed the problem
 
-- 
+-
 
-## 要回灌的内容
+## Knowledge feedback items
 
-- 新规则：
-- 新模板：
-- 新回归：
-- 新技能：
+- New rules:
+- New templates:
+- New regression cases:
+- New skills:
 
-## 后续负责人
+## Follow-up owner
 
-- 负责人：
-- 截止时间：
+- Owner:
+- Deadline:

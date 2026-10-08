@@ -1,9 +1,8 @@
-# 标准研发工作流
+# Standard Development Workflow
 
-本仓采用“AI 主执行，人审合并”的工作模式。  
-所有跨仓需求、发布准备和问题复盘，都必须按下面这 8 条 workflow 组织。
+This repository uses AI for primary execution and human review before merging. Organize every cross-repository request, release preparation, and postmortem around these eight workflows.
 
-## Workflow 总览
+## Workflow overview
 
 1. `workspace-baseline-workflow`
 2. `change-intake-workflow`
@@ -16,170 +15,163 @@
 
 ## 0. `workspace-baseline-workflow`
 
-用途：拉齐业务仓、发现命令契约、生成本地基线报告。
+Purpose: synchronize business repositories, discover command contracts, and generate local baseline reports.
 
-执行顺序：
+Execution order:
 
 1. `scripts\bootstrap\clone-repos.ps1`
 2. `scripts\bootstrap\sync-repos.ps1`
 3. `scripts\checks\discover-contracts.ps1`
 4. `scripts\checks\run-local-baseline.ps1`
 
-输出：
+Outputs:
 
-- 仓库状态
-- 契约发现报告
-- 基线矩阵
+- Repository status
+- Contract discovery reports
+- Baseline matrix
 
-要求：
+Requirements:
 
-- 默认只在 `D:\workspace\agent-harness\repos\` 下操作
-- 默认不连接生产环境
-- 本地报告统一输出到 `reports/local-validation/`
+- Operate only under `D:\workspace\agent-harness\repos\` by default.
+- Do not connect to production by default.
+- Write local reports under `reports/local-validation/`.
 
-未完成本地基线的仓，不应直接用作发布前置判断。
+A repository without a completed local baseline should not directly support pre-release decisions.
 
 ## 1. `change-intake-workflow`
 
-用途：把模糊需求整理成结构化变更单。
+Purpose: turn unclear requests into structured change records.
 
-执行顺序：
+Execution order:
 
-1. 在 `changes/<change-id>/` 创建变更目录
-2. 填写 `brief.md`
-3. 初始化 `execution.yaml`
+1. Create a change directory under `changes/<change-id>/`.
+2. Complete `brief.md`.
+3. Initialize `execution.yaml`.
 
-核心文件：
+Core files: `brief.md`, `execution.yaml`.
 
-- `brief.md`
-- `execution.yaml`
+Gates:
 
-门禁：
-
-- 没有 `change-id`，不允许进入业务仓开发
-- 没有 `brief.md`，不允许进入影响分析
+- Do not begin business-repository development without a `change-id`.
+- Do not begin impact analysis without `brief.md`.
 
 ## 2. `impact-design-workflow`
 
-用途：把业务意图变成结构化影响分析、轻量设计和执行状态。
+Purpose: turn business intent into structured impact analysis, lightweight design, and execution status.
 
-执行顺序：
+Execution order:
 
-1. 填写 `impact.yaml`
-2. 填写 `design.md`
-3. 更新 `execution.yaml` 中的阶段、owner、依赖顺序和锁状态
+1. Complete `impact.yaml`.
+2. Complete `design.md`.
+3. Update the stage, owner, dependency order, and locks in `execution.yaml`.
 
-核心文件：
+Core files: `impact.yaml`, `design.md`, `execution.yaml`.
 
-- `impact.yaml`
-- `design.md`
-- `execution.yaml`
+Gates:
 
-门禁：
-
-- 没有 `impact.yaml`，不允许进入任务拆分和实现
-- 同级规则冲突不得“猜一个执行”，必须写成 `待确认`
+- Do not begin task breakdown or implementation without `impact.yaml`.
+- Record same-level rule conflicts as `Needs confirmation`; do not guess.
 
 ## 3. `task-splitting-workflow`
 
-用途：把跨仓需求拆成可执行的 repo 级任务卡，并绑定执行边界。
+Purpose: break cross-repository requests into executable repository task cards and bind execution boundaries.
 
-执行顺序：
+Execution order:
 
-1. 生成 `tasks/*.md`
-2. 为每个受影响仓绑定 `repo_owner`
-3. 在 `execution.yaml` 中登记 `write_scopes`、`branch`、`worktree`
+1. Generate `tasks/*.md`.
+2. Assign a `repo_owner` to every affected repository.
+3. Record `write_scopes`, `branch`, and `worktree` in `execution.yaml`.
 
-任务卡必须写清：
+Each task card must specify:
 
-- 输入
-- 输出
-- 改动边界
-- 禁止改动项
-- 本仓验证命令
-- 发布前证据项
+- Inputs
+- Outputs
+- Change boundaries
+- Prohibited changes
+- Repository verification commands
+- Required pre-release evidence
 
 ## 4. `repo-execution-workflow`
 
-用途：按仓边界进入实现和仓内自测。
+Purpose: implement changes and run self-tests within repository boundaries.
 
-执行顺序：
+Execution order:
 
-1. 读取本仓规则、命令契约、`execution.yaml`
-2. 锁定目标 repo 的写边界
-3. 按任务卡修改代码
-4. 先跑本仓最小命令契约
-5. 回填仓内验证结果和使用快照
+1. Read repository rules, command contracts, and `execution.yaml`.
+2. Lock the target repository's write boundaries.
+3. Modify code according to the task card.
+4. Run the repository's minimum command contract first.
+5. Record repository verification results and the snapshot used.
 
-要求：
+Requirements:
 
-- `backend-exec-agent` 只负责 `backend`
-- `web-exec-agent` 只负责 `web-portal`
-- `admin-web-exec-agent` 只负责 `admin-web`
-- `mobile-a-exec-agent` 只负责 `mobile-a`
-- `mobile-b-exec-agent` 只负责 `mobile-b`
-- 当前阶段不默认把 `mobile-c`、`miniapp` 视为可发布工程
-- 同一时间只允许一个 Agent 写一个业务仓
-- 不允许多个 Agent 共享同一个可写 worktree
+- `backend-exec-agent` handles only `backend`.
+- `web-exec-agent` handles only `web-portal`.
+- `admin-web-exec-agent` handles only `admin-web`.
+- `mobile-a-exec-agent` handles only `mobile-a`.
+- `mobile-b-exec-agent` handles only `mobile-b`.
+- Do not assume `mobile-c` and `miniapp` are release-ready at this stage.
+- Only one agent may write a business repository at a time.
+- Multiple agents must not share a writable worktree.
 
 ## 5. `cross-repo-acceptance-workflow`
 
-用途：按用户业务链路做跨仓验收，而不是只看单仓绿灯。
+Purpose: verify complete user business workflows across repositories, beyond individual repository checks.
 
-执行顺序：
+Execution order:
 
-1. 以 `acceptance.md` 为唯一验收脚本
-2. 逐步记录操作、预期结果和实际结果
-3. 记录所依据的报告、分支、提交和环境快照
-4. 把异常、缺口和风险写入 `verification/result.md`
+1. Use `acceptance.md` as the sole acceptance script.
+2. Record actions, expected results, and actual results step by step.
+3. Record the supporting reports, branches, commits, and environment snapshots.
+4. Record anomalies, gaps, and risks in `verification/result.md`.
 
-要求：
+Requirements:
 
-- 只做单仓自测，不允许宣布跨端需求完成
-- 验收单位必须是业务链路，不是某一个 repo
-- `verification/result.md` 只允许 `verification-agent` 作为主 owner 写入
+- Do not declare a cross-platform request complete based only on repository self-tests.
+- The unit of acceptance is a business workflow, not a repository.
+- Only `verification-agent` may be the primary writer of `verification/result.md`.
 
 ## 6. `release-governance-workflow`
 
-用途：把“能跑”变成“可上线、可回滚、可观察”。
+Purpose: establish deployment, rollback, and monitoring readiness.
 
-执行顺序：
+Execution order:
 
-1. 生成发布单
-2. 汇总仓库、分支、配置、数据变更
-3. 明确发布顺序
-4. 明确回滚步骤
-5. 明确发布后观察点
+1. Generate a release record.
+2. Summarize repositories, branches, configuration, and data changes.
+3. Specify release order.
+4. Specify rollback steps.
+5. Specify post-release monitoring points.
 
-要求：
+Requirements:
 
-- 没有回滚说明，不允许形成发布结论
-- 没有验收记录，不允许进入上线准备
-- 所有外部事实必须带来源和时间戳
-- 没有来源的 MCP 结论不能作为发布依据
+- Do not issue a release conclusion without rollback instructions.
+- Do not begin deployment preparation without acceptance records.
+- Include sources and timestamps for all external facts.
+- Unsourced MCP conclusions cannot support release decisions.
 
 ## 7. `knowledge-feedback-workflow`
 
-用途：把事故、返工和漏测项沉淀回控制平面。
+Purpose: turn incidents, rework, and missed tests into control-plane improvements.
 
-执行顺序：
+Execution order:
 
-1. 在 `postmortem.md` 记录问题和根因
-2. 把改进项回灌到规则、模板、回归集和 skills
-3. 至少补一项：新规则 / 新模板 / 新回归 / 新技能
-4. 更新控制仓文档与门禁
+1. Record problems and root causes in `postmortem.md`.
+2. Feed improvements back into rules, templates, regression suites, and skills.
+3. Add at least one new rule, template, regression case, or skill.
+4. Update control-repository documentation and gates.
 
-要求：
+Requirements:
 
-- 复盘不是可选动作
-- 问题不能只留在聊天记录里
+- Postmortems are required.
+- Problems must not remain only in conversation history.
 
-## 7. 人工审查与合并
+## 7. Human review and merging
 
-人工审查重点：
+Human review focuses on:
 
-- 需求是否被正确实现
-- 风险是否被显式记录
-- 验收和发布条件是否满足
+- Whether the request is correctly implemented
+- Whether risks are explicitly recorded
+- Whether acceptance and release conditions are met
 
-人工不再替代结构化文档，也不接受“口头说已测过”。
+Human review does not replace structured documentation, and verbal claims that testing was completed are insufficient.

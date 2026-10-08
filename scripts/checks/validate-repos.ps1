@@ -46,14 +46,14 @@ $seenIds = @{}
 $seenPaths = @{}
 
 if ($repos.Count -eq 0) {
-    $errors.Add('repos.yaml 中没有任何仓库定义。')
+    $errors.Add('No repositories are defined in repos.yaml.')
 }
 
 foreach ($repo in $repos) {
     foreach ($field in $requiredFields) {
         $hasProperty = $repo.PSObject.Properties.Name -contains $field
         if (-not $hasProperty) {
-            $errors.Add("仓库 $($repo.name) 缺少字段：$field")
+            $errors.Add("Repository $($repo.name) is missing field: $field")
             continue
         }
 
@@ -61,60 +61,60 @@ foreach ($repo in $repos) {
         if ($field -eq 'safe_check_commands') {
             $arrayValue = @($value)
             if ($arrayValue.Count -eq 0) {
-                $errors.Add("仓库 $($repo.name) 的 safe_check_commands 不能为空。")
+                $errors.Add("Repository $($repo.name) must have nonempty safe_check_commands.")
             }
             continue
         }
 
         if ([string]::IsNullOrWhiteSpace([string]$value)) {
-            $errors.Add("仓库 $($repo.name) 的字段为空：$field")
+            $errors.Add("Repository $($repo.name) has an empty field: $field")
         }
     }
 
     if ($seenIds.ContainsKey($repo.id)) {
-        $errors.Add("存在重复的仓库 id：$($repo.id)")
+        $errors.Add("Duplicate repository ID: $($repo.id)")
     } else {
         $seenIds[$repo.id] = $true
     }
 
     if ($seenPaths.ContainsKey($repo.local_path)) {
-        $errors.Add("存在重复的 local_path：$($repo.local_path)")
+        $errors.Add("Duplicate local_path: $($repo.local_path)")
     } else {
         $seenPaths[$repo.local_path] = $true
     }
 
     if (-not ([string]$repo.remote).StartsWith('https://example.com/')) {
-        $errors.Add("仓库 $($repo.id) 的 remote 不是示例 Git HTTPS 地址。")
+        $errors.Add("Repository $($repo.id) remote is not a sample Git HTTPS URL.")
     }
 
     if (-not ([string]$repo.local_path).StartsWith('D:\workspace\agent-harness\repos\')) {
-        $errors.Add("仓库 $($repo.id) 的 local_path 未落在 D:\\workspace\\agent-harness\\repos\\ 下。")
+        $errors.Add("Repository $($repo.id) local_path is not under D:\\workspace\\agent-harness\\repos\\.")
     }
 
     if ($allowedStatuses -notcontains [string]$repo.status) {
-        $errors.Add("仓库 $($repo.id) 的 status 不在允许范围：$($repo.status)")
+        $errors.Add("Repository $($repo.id) has an unsupported status: $($repo.status)")
     }
 
     if ($allowedCloneModes -notcontains [string]$repo.clone_mode) {
-        $errors.Add("仓库 $($repo.id) 的 clone_mode 不在允许范围：$($repo.clone_mode)")
+        $errors.Add("Repository $($repo.id) has an unsupported clone_mode: $($repo.clone_mode)")
     }
 
     if ($allowedProfiles -notcontains [string]$repo.validation_profile) {
-        $errors.Add("仓库 $($repo.id) 的 validation_profile 不在允许范围：$($repo.validation_profile)")
+        $errors.Add("Repository $($repo.id) has an unsupported validation_profile: $($repo.validation_profile)")
     }
 
     if ($allowedRoles -notcontains [string]$repo.role) {
-        $errors.Add("仓库 $($repo.id) 的 role 不在允许范围：$($repo.role)")
+        $errors.Add("Repository $($repo.id) has an unsupported role: $($repo.role)")
     }
 }
 
 if ($errors.Count -gt 0) {
-    Write-Host "仓库元数据校验失败：" -ForegroundColor Red
+    Write-Host "Repository metadata validation failed: " -ForegroundColor Red
     foreach ($errorItem in $errors) {
         Write-Host "  - $errorItem" -ForegroundColor Red
     }
-    throw "repos.yaml 校验未通过。"
+    throw "repos.yaml validation failed."
 }
 
-Write-Host "repos.yaml 校验通过。" -ForegroundColor Green
+Write-Host "repos.yaml validation passed." -ForegroundColor Green
 $repos | Select-Object id, role, validation_profile, stack, default_branch, status | Format-Table -AutoSize

@@ -1,6 +1,6 @@
 interface:
-  display_name: "跨仓验收记录"
-  short_description: "按业务链路回填验收步骤结果异常点与遗留风险供发布前审查"
+  display_name: "Cross-repository acceptance records"
+  short_description: "Record workflow acceptance evidence for release review"
   default_prompt: "Use $cross-repo-acceptance-recorder to fill acceptance evidence for a cross-repo change."
 
 policy:

@@ -35,7 +35,7 @@ function Write-Utf8File {
     )
 
     if ((Test-Path -LiteralPath $Path) -and -not $AllowOverwrite) {
-        throw "文件已存在：$Path。若要覆盖，请使用 -Force。"
+        throw "File already exists: $Path. Use -Force to overwrite it."
     }
 
     $parent = Split-Path -Parent $Path
@@ -170,14 +170,14 @@ function New-ExecutionContent {
 }
 
 if ($ChangeId -notmatch '^CHG-\d{4}-\d{4}-[a-z0-9-]+$') {
-    throw "ChangeId 格式不合法：$ChangeId。要求格式为 CHG-YYYY-NNNN-slug。"
+    throw "Invalid ChangeId: $ChangeId. Expected format: CHG-YYYY-NNNN-slug."
 }
 
 $repoRoot = Get-HarnessRepoRoot
 $changeDir = Join-Path $repoRoot ("changes\" + $ChangeId)
 
 if ((Test-Path -LiteralPath $changeDir) -and -not $Force) {
-    throw "变更目录已存在：$changeDir。若要重建，请使用 -Force。"
+    throw "Change directory already exists: $changeDir. Use -Force to recreate it."
 }
 
 $templateDir = Join-Path $repoRoot 'templates'
@@ -216,11 +216,11 @@ foreach ($repo in $repos) {
     $taskContent = Render-Template -TemplatePath (Join-Path $templateDir 'task-card.md') -Tokens $taskTokens
     $taskContent += @"
 
-## 建议命令
+## Recommended commands
 
-- 构建：$($repo.build_command)
-- 测试：$($repo.test_command)
-- Smoke：$($repo.smoke_command)
+- Build: $($repo.build_command)
+- Test: $($repo.test_command)
+- Smoke: $($repo.smoke_command)
 "@
 
     Write-Utf8File -Path (Join-Path $changeDir ("tasks\" + $repo.id + '.md')) -Content $taskContent -AllowOverwrite:$Force
@@ -239,5 +239,5 @@ foreach ($repo in $repos) {
 Write-Utf8File -Path (Join-Path $changeDir 'verification\result.md') -Content (Render-Template -TemplatePath (Join-Path $templateDir 'verification-result.md') -Tokens $baseTokens) -AllowOverwrite:$Force
 Write-Utf8File -Path (Join-Path $changeDir 'postmortem.md') -Content (Render-Template -TemplatePath (Join-Path $templateDir 'postmortem.md') -Tokens $baseTokens) -AllowOverwrite:$Force
 
-Write-Host "已创建变更单：$changeDir"
-Write-Host "已生成 repo 级任务卡数量：$($repos.Count)"
+Write-Host "Created change record: $changeDir"
+Write-Host "Repository task cards generated: $($repos.Count)"

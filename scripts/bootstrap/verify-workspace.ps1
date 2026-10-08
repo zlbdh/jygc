@@ -16,7 +16,7 @@ $validateReposScript = Join-Path $repoRoot 'scripts\checks\validate-repos.ps1'
 try {
     $null = git --version
 } catch {
-    throw "未检测到 git，请先安装并加入 PATH。"
+    throw "Git was not found. Install it and add it to PATH."
 }
 
 $requiredPaths = @(
@@ -82,7 +82,7 @@ $warnings = New-Object System.Collections.Generic.List[string]
 foreach ($required in $requiredPaths) {
     $fullPath = Join-Path $repoRoot $required
     if (-not (Test-Path -LiteralPath $fullPath)) {
-        $errors.Add("缺少控制仓关键路径：$required")
+        $errors.Add("Required control-repository path is missing: $required")
     }
 }
 
@@ -90,34 +90,34 @@ $repos = Get-HarnessRepoConfig
 $roles = Get-HarnessAgentRegistry
 
 if ($roles.Count -eq 0) {
-    $errors.Add('agent-registry.yaml 中未发现任何角色定义。')
+    $errors.Add('No role definitions were found in agent-registry.yaml.')
 }
 
 foreach ($repo in $repos) {
     if (-not (Test-Path -LiteralPath $repo.local_path)) {
-        $warnings.Add("未发现本地业务仓：$($repo.id) -> $($repo.local_path)")
+        $warnings.Add("Local business repository not found: $($repo.id) -> $($repo.local_path)")
     }
 }
 
 if ($errors.Count -gt 0) {
-    Write-Host "工作区结构校验失败：" -ForegroundColor Red
+    Write-Host "Workspace structure validation failed: " -ForegroundColor Red
     foreach ($errorItem in $errors) {
         Write-Host "  - $errorItem" -ForegroundColor Red
     }
-    throw "工作区结构校验未通过。"
+    throw "Workspace structure validation failed."
 }
 
-Write-Host "控制仓基础结构正常。" -ForegroundColor Green
+Write-Host "The control-repository base structure is valid." -ForegroundColor Green
 
 if ($warnings.Count -gt 0) {
-    Write-Host "发现未落位的本地业务仓：" -ForegroundColor Yellow
+    Write-Host "The following local business repositories are missing: " -ForegroundColor Yellow
     foreach ($warning in $warnings) {
         Write-Host "  - $warning" -ForegroundColor Yellow
     }
 
     if ($RequireLocalRepos) {
-        throw "存在未落位的本地业务仓。"
+        throw "Some local business repositories are missing."
     }
 }
 
-Write-Host "工作区检查完成。" -ForegroundColor Green
+Write-Host "Workspace check complete." -ForegroundColor Green

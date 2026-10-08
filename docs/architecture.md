@@ -1,107 +1,107 @@
-# 控制仓架构说明
+# Control Repository Architecture
 
-## 1. 总体定位
+## 1. Overall purpose
 
-`example-product-harness` 是示例产品多仓研发的控制平面，负责统一管理需求、任务、评测、验收和发布。
+`example-product-harness` is the control plane for development across the example product's repositories. It centrally manages requirements, tasks, evaluations, acceptance, and releases.
 
-本仓不直接承载业务实现代码，而是通过结构化文档、脚本、skills 和 MCP 蓝图，把多个业务仓组织成一条可执行的研发流水线。
+Business implementation code remains in business repositories. Structured documents, scripts, skills, and MCP blueprints organize those repositories into an executable development workflow.
 
-控制平面由 5 个组成部分构成：
+The control plane has five components:
 
-- `docs/`：概念、架构、流程、清单
-- `standards/`：门禁、治理和安全规则
-- `templates/`：变更、设计、执行状态、验证、发布、复盘模板
-- `.agent/skills/`：控制仓级流程型 skills
-- `mcp/`：只读、非生产的 MCP 蓝图
+- `docs/`: concepts, architecture, workflows, and inventories
+- `standards/`: gates, governance, and safety rules
+- `templates/`: change, design, execution status, verification, release, and postmortem templates
+- `.agent/skills/`: workflow skills for the control repository
+- `mcp/`: read-only, nonproduction MCP blueprints
 
-## 2. 七个业务仓职责边界
+## 2. Responsibilities of the seven business repositories
 
-### 2.1 `backend`：后端微服务仓
+### 2.1 `backend`: backend microservices
 
-- 技术栈：Spring Cloud 示例工程、Spring Boot、Spring Cloud Alibaba、MyBatis Plus
-- 职责：承载订单、商城、财务、物业、养老、培训等后端业务能力
-- 关键特征：多微服务、Redis、RabbitMQ、Seata、导出、幂等、权限体系
+- Stack: Spring Cloud example project, Spring Boot, Spring Cloud Alibaba, MyBatis Plus
+- Responsibilities: backend capabilities for orders, commerce, finance, property management, senior care, and training
+- Key characteristics: microservices, Redis, RabbitMQ, Seata, exports, idempotency, and permissions
 
-### 2.2 `web-portal`：企业平台 PC 端
+### 2.2 `web-portal`: enterprise desktop web portal
 
-- 技术栈：Vue 3、Vite、Element Plus、Pinia
-- 职责：企业管理员与业务操作人员的后台管理界面
-- 关键特征：工单调度、商城、财务、智慧物业、养老、培训中心、系统管理
+- Stack: Vue 3, Vite, Element Plus, Pinia
+- Responsibilities: administration interface for enterprise administrators and business operators
+- Key characteristics: work-order dispatch, commerce, finance, smart property management, senior care, training center, and system administration
 
-### 2.3 `admin-web`：示例产品大平台管理端
+### 2.3 `admin-web`: example product platform administration portal
 
-- 技术栈：按现有需求文档暂按 Vue 3 + Vite + Element Plus 基线管理
-- 职责：平台级企业审核、服务/商品审核、订单路由、平台消费者运营、全局监管
-- 关键特征：不是企业后台，而是平台总控端
+- Stack: provisionally governed against Vue 3 + Vite + Element Plus, based on current requirements
+- Responsibilities: platform-level enterprise approval, service/product approval, order routing, consumer operations, and global oversight
+- Key characteristic: platform-wide control, distinct from enterprise administration
 
-### 2.4 `mobile-a`：企业端移动 App
+### 2.4 `mobile-a`: enterprise mobile app
 
-- 技术栈：React Native、Expo、TypeScript
-- 职责：企业管理者、运营和一线人员的移动管理工具
-- 关键特征：待办、订单、客户、员工、审批、移动化业务视图
+- Stack: React Native, Expo, TypeScript
+- Responsibilities: mobile management tools for enterprise managers, operations staff, and frontline workers
+- Key characteristics: to-do items, orders, customers, employees, approvals, and mobile business views
 
-### 2.5 `mobile-b`：商家端移动 App
+### 2.5 `mobile-b`: merchant mobile app
 
-- 技术栈：按现有需求文档暂按 React Native + TypeScript 基线管理
-- 职责：入驻商家移动经营、商品发布、订单处理、经营分析
-- 关键特征：店铺管理、商品管理、商家订单与结算
+- Stack: provisionally governed against React Native + TypeScript, based on current requirements
+- Responsibilities: merchant operations, product publishing, order processing, and business analytics on mobile
+- Key characteristics: store management, product management, merchant orders, and settlement
 
-### 2.6 `mobile-c`：服务员端移动 App
+### 2.6 `mobile-c`: staff mobile app
 
-- 技术栈：按现有需求文档暂按 React Native + TypeScript 基线管理
-- 职责：一线服务人员接单、排班、打卡、收入查看
-- 关键特征：工单执行、考勤、收入透明、消息通知
+- Stack: provisionally governed against React Native + TypeScript, based on current requirements
+- Responsibilities: frontline workers accepting assignments, scheduling, clocking in, and viewing earnings
+- Key characteristics: work-order execution, attendance, earnings transparency, and notifications
 
-### 2.7 `miniapp`：消费者小程序
+### 2.7 `miniapp`: consumer miniapp
 
-- 技术栈：按现有需求文档暂按小程序工程 + TypeScript/Node 辅助工具链管理
-- 职责：消费者轻量化服务入口
-- 关键特征：小程序配置、平台与企业双模式、微信生态能力
+- Stack: provisionally governed as a miniapp project with TypeScript/Node supporting tools, based on current requirements
+- Responsibilities: a lightweight consumer service entry point
+- Key characteristics: miniapp configuration, platform and enterprise modes, and WeChat ecosystem capabilities
 
-## 3. 控制仓负责什么
+## 3. Control repository responsibilities
 
-- 统一定义 `change-id`
-- 记录跨仓影响分析
-- 记录执行状态、owner、锁和 worktree
-- 输出 repo 级任务卡
-- 管理黄金回归用例
-- 汇总发布清单与回滚说明
-- 固化 AI 执行规则与人工审查门禁
-- 设计并托管 Agent / Workflow / Skill / MCP 控制平面
-- 管理 7 仓本地拉齐、自检和风险矩阵
+- Define `change-id` consistently
+- Record cross-repository impact analysis
+- Record execution status, owners, locks, and worktrees
+- Produce repository-level task cards
+- Manage golden regression cases
+- Consolidate release checklists and rollback instructions
+- Document AI execution rules and human review gates
+- Design and host the Agent / Workflow / Skill / MCP control plane
+- Manage local synchronization, self-checks, and risk matrices for the seven repositories
 
-## 4. 控制仓不负责什么
+## 4. Outside the control repository's responsibilities
 
-- 不替代业务仓 README
-- 不存放业务仓主代码
-- 不绕过业务仓本地验证
-- 不用自然语言聊天记录替代结构化文档
+- Replacing business-repository READMEs
+- Storing business application code
+- Bypassing local business-repository verification
+- Replacing structured documentation with natural-language conversation history
 
-## 5. 仓间协作模型
+## 5. Repository collaboration model
 
 ```text
-需求进入控制仓
+Request enters the control repository
   -> clone/sync/discover/baseline
   -> brief.md
   -> impact.yaml
   -> execution.yaml
   -> tasks/<repo>.md
-  -> 各业务仓执行开发与自测
-  -> 控制仓做跨端验收
-  -> release/*.md 输出发布说明
+  -> Development and self-tests in each business repository
+  -> Cross-platform acceptance in the control repository
+  -> Release notes in release/*.md
 ```
 
-## 6. 控制仓目录与职责映射
+## 6. Directory responsibilities
 
-- `repos/`：业务仓元数据与定位
-- `docs/`：全局架构、概念、流程、命令契约、清单
-- `standards/`：通用规则与分端规则
-- `templates/`：标准模板
-- `changes/`：单个需求的全过程档案
-- `evals/`：黄金回归集和自动化入口规划
-- `reports/`：本地拉齐、自检、契约发现和基线验证报告
-- `release/`：发布包与回滚说明
-- `.agent/skills/`：控制仓级流程型 skills
-- `mcp/`：MCP 蓝图与接入策略
-- `scripts/`：初始化、校验和工作区检查脚本
-- `docs/cross-repo/`：跨仓长期索引
+- `repos/`: business-repository metadata and roles
+- `docs/`: global architecture, concepts, workflows, command contracts, and inventories
+- `standards/`: shared and platform-specific rules
+- `templates/`: standard templates
+- `changes/`: complete lifecycle records for individual requests
+- `evals/`: golden regression suite and automation entry-point plans
+- `reports/`: local synchronization, self-check, contract discovery, and baseline verification reports
+- `release/`: release packages and rollback instructions
+- `.agent/skills/`: workflow skills for the control repository
+- `mcp/`: MCP blueprints and integration policies
+- `scripts/`: initialization, validation, and workspace inspection scripts
+- `docs/cross-repo/`: long-term cross-repository indexes

@@ -1,6 +1,6 @@
 interface:
-  display_name: "需求受理"
-  short_description: "把模糊需求整理成可进入控制仓研发流程的标准变更单入口"
+  display_name: "Change intake"
+  short_description: "Turn unclear requests into standard change records"
   default_prompt: "Use $change-intake to draft or refine brief.md for a new example-product change."
 
 policy:

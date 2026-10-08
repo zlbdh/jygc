@@ -58,11 +58,11 @@ function Normalize-WorkerResponse {
 
     return [pscustomobject]@{
         status = if ($ExitCode -eq 0) { 'failed' } else { 'failed' }
-        summary = 'worker 最终输出未能解析为结构化 JSON，请查看 raw_response。'
+        summary = 'The final worker output could not be parsed as structured JSON. See raw_response.'
         changed_files = @()
         commands = @()
-        risks = @('worker 输出格式不合法，需人工检查运行日志。')
-        handoff_note = '请人工检查 raw_response 并决定是否重跑 worker。'
+        risks = @('Invalid worker output format. Manually inspect the runtime logs.')
+        handoff_note = 'Inspect raw_response manually and decide whether to rerun the worker.'
         exit_code = $ExitCode
         raw_response = $RawResponse
     }
@@ -75,7 +75,8 @@ function Test-HarnessBlockedMessage {
         return $false
     }
 
-    return $Text -match 'blocked by policy|rejected: blocked by policy|受环境限制|环境策略|当前环境.*阻止|无法执行|沙箱策略|sandbox|权限限制|EACCES|未安装到本地可执行路径|缺少 .+ 可执行文件|is not recognized as an internal or external command'
+    # Match English diagnostics and retain legacy Chinese diagnostics from external tools.
+    return $Text -match 'environment restrictions|restricted by the environment or policy|not installed locally|blocked by policy|rejected: blocked by policy|受环境限制|环境策略|当前环境.*阻止|无法执行|沙箱策略|sandbox|权限限制|EACCES|未安装到本地可执行路径|缺少 .+ 可执行文件|is not recognized as an internal or external command'
 }
 
 function Test-HarnessUsageLimitMessage {
@@ -133,16 +134,16 @@ function Invoke-WrapperVerifyCommands {
         $result = Invoke-HarnessCommand -Command $expected -WorkingDirectory $WorkingDirectory
         $trimmedOutput = ($result.Output | Out-String).Trim()
         $summary = if ([string]::IsNullOrWhiteSpace($trimmedOutput)) {
-            if ($result.ExitCode -eq 0) { 'wrapper 已执行，本仓验证命令通过。' } else { 'wrapper 已执行，但命令失败且未产生输出。' }
+            if ($result.ExitCode -eq 0) { 'The wrapper ran and repository verification commands passed.' } else { 'The wrapper ran, but the command failed without output.' }
         } else {
             $normalized = $trimmedOutput -replace "`r", ' ' -replace "`n", ' '
             if ($normalized.Length -gt 300) {
                 $normalized = $normalized.Substring(0, 300) + '...'
             }
             if ($result.ExitCode -eq 0) {
-                "wrapper 已执行并通过：$normalized"
+                "The wrapper ran successfully: $normalized"
             } else {
-                "wrapper 已执行但失败：$normalized"
+                "The wrapper ran but failed: $normalized"
             }
         }
 
@@ -174,12 +175,12 @@ function Invoke-WrapperVerifyCommands {
     $CurrentResponse.commands = [object[]]$updatedCommands.ToArray()
     $existingRisks = @($CurrentResponse.risks)
     $existingRisks = @($existingRisks | Where-Object {
-        ($_ -ne '本仓验证命令受环境/策略限制，当前应判定为 blocked。') -and
-        ($_ -notmatch '当前环境禁止执行 Node/npm/npx 命令')
+        ($_ -ne 'Repository verification commands are restricted by the environment or policy; classify this run as blocked.') -and
+        ($_ -notmatch 'the current environment prohibits Node/npm/npx commands|当前环境禁止执行 Node/npm/npx 命令')
     })
     if ($wrapperHasFailure) {
-        if ('wrapper 已重跑本仓验证命令，但仍存在失败项。' -notin $existingRisks) {
-            $existingRisks += 'wrapper 已重跑本仓验证命令，但仍存在失败项。'
+        if ('The wrapper reran repository verification commands, but failures remain.' -notin $existingRisks) {
+            $existingRisks += 'The wrapper reran repository verification commands, but failures remain.'
         }
         if ($CurrentResponse.status -eq 'blocked') {
             $CurrentResponse.status = 'failed'
@@ -189,9 +190,9 @@ function Invoke-WrapperVerifyCommands {
             $CurrentResponse.status = 'completed'
         }
         if (-not [string]::IsNullOrWhiteSpace($CurrentResponse.summary)) {
-            $CurrentResponse.summary = "wrapper 已补跑本仓最小验证命令并通过。原摘要：$($CurrentResponse.summary)"
+            $CurrentResponse.summary = "The wrapper ran the missing minimum repository verification commands successfully. Original summary: $($CurrentResponse.summary)"
         } else {
-            $CurrentResponse.summary = 'wrapper 已补跑本仓最小验证命令并通过。'
+            $CurrentResponse.summary = 'The wrapper ran the missing minimum repository verification commands successfully.'
         }
     }
     $CurrentResponse.risks = $existingRisks
@@ -487,26 +488,26 @@ function Refine-WorkerResponse {
 
     if ($verificationBlocked) {
         $existingRisks = @($Response.risks)
-        if ('本仓验证命令受环境/策略限制，当前应判定为 blocked。' -notin $existingRisks) {
-            $existingRisks += '本仓验证命令受环境/策略限制，当前应判定为 blocked。'
+        if ('Repository verification commands are restricted by the environment or policy; classify this run as blocked.' -notin $existingRisks) {
+            $existingRisks += 'Repository verification commands are restricted by the environment or policy; classify this run as blocked.'
         }
         $Response.status = 'blocked'
         $Response.risks = $existingRisks
-        if (-not ([string]$Response.summary).Contains('受环境/策略限制')) {
-            $Response.summary = "本仓验证命令受环境/策略限制，按运行协议改判为 blocked。原摘要：$($Response.summary)"
+        if (-not ([string]$Response.summary).Contains('restricted by the environment or policy')) {
+            $Response.summary = "Repository verification commands are restricted by the environment or policy. Reclassified as blocked under the runtime protocol. Original summary: $($Response.summary)"
         }
         return $Response
     }
 
     if ($verificationMissing -and (($Response.status -eq 'completed') -or ($Response.status -eq 'no_changes'))) {
         $existingRisks = @($Response.risks)
-        if ('本仓最小验证命令未完整回填，当前不能视为完成。' -notin $existingRisks) {
-            $existingRisks += '本仓最小验证命令未完整回填，当前不能视为完成。'
+        if ('Minimum repository verification results are incomplete; this run cannot be considered complete.' -notin $existingRisks) {
+            $existingRisks += 'Minimum repository verification results are incomplete; this run cannot be considered complete.'
         }
         $Response.status = 'blocked'
         $Response.risks = $existingRisks
-        if (-not ([string]$Response.summary).Contains('最小验证命令')) {
-            $Response.summary = "本仓最小验证命令未完整回填，按运行协议改判为 blocked。原摘要：$($Response.summary)"
+        if (-not ([string]$Response.summary).Contains('Minimum repository verification')) {
+            $Response.summary = "Minimum repository verification results are incomplete. Reclassified as blocked under the runtime protocol. Original summary: $($Response.summary)"
         }
     }
 
@@ -527,27 +528,27 @@ function Convert-WorkerResponseToMarkdown {
     )
 
     $lines = New-Object System.Collections.Generic.List[string]
-    $lines.Add(("# {0} / {1} Worker 执行结果" -f $CurrentChangeId, $RepoId))
+    $lines.Add(("# {0} / {1} Worker execution results" -f $CurrentChangeId, $RepoId))
     $lines.Add('')
     $lines.Add('## Runtime')
     $lines.Add('')
-    $lines.Add(('- 变更标题：{0}' -f $Title))
-    $lines.Add(('- 仓库：`{0}`' -f $RepoName))
-    $lines.Add(('- 仓库 ID：`{0}`' -f $RepoId))
-    $lines.Add(('- 角色：`{0}`' -f $RoleId))
-    $lines.Add(('- runtime_type：`{0}`' -f $RuntimeType))
-    $lines.Add(('- 当前状态：{0}' -f $Response.status))
-    $lines.Add(('- worktree：`{0}`' -f $WorktreePath))
-    $lines.Add(('- packet：`{0}`' -f $PacketPath))
-    $lines.Add(('- worker exit code：`{0}`' -f $Response.exit_code))
+    $lines.Add(('- Change title: {0}' -f $Title))
+    $lines.Add(('- Repository: `{0}`' -f $RepoName))
+    $lines.Add(('- Repository ID: `{0}`' -f $RepoId))
+    $lines.Add(('- Role: `{0}`' -f $RoleId))
+    $lines.Add(('- runtime_type: `{0}`' -f $RuntimeType))
+    $lines.Add(('- Current status: {0}' -f $Response.status))
+    $lines.Add(('- worktree: `{0}`' -f $WorktreePath))
+    $lines.Add(('- packet: `{0}`' -f $PacketPath))
+    $lines.Add(('- worker exit code: `{0}`' -f $Response.exit_code))
     $lines.Add('')
-    $lines.Add('## 执行摘要')
+    $lines.Add('## Execution summary')
     $lines.Add('')
     $lines.Add(($Response.summary))
     $lines.Add('')
-    $lines.Add('## 命令执行结果')
+    $lines.Add('## Command execution results')
     $lines.Add('')
-    $lines.Add('| 命令 | ExitCode | 摘要 |')
+    $lines.Add('| Command | ExitCode | Summary |')
     $lines.Add('|------|----------|------|')
     foreach ($command in @($Response.commands)) {
         $cmd = [string]$command.command
@@ -556,28 +557,28 @@ function Convert-WorkerResponseToMarkdown {
         $lines.Add(('| `{0}` | `{1}` | {2} |' -f $cmd, $cmdExitCode, $cmdSummary))
     }
     if (@($Response.commands).Count -eq 0) {
-        $lines.Add('|  |  | 无 |')
+        $lines.Add('|  |  | None |')
     }
     $lines.Add('')
-    $lines.Add('## 涉及文件')
+    $lines.Add('## Affected files')
     $lines.Add('')
     foreach ($file in @($Response.changed_files)) {
         $lines.Add(('- `{0}`' -f $file))
     }
     if (@($Response.changed_files).Count -eq 0) {
-        $lines.Add('- `无`')
+        $lines.Add('- `None`')
     }
     $lines.Add('')
-    $lines.Add('## 遗留风险')
+    $lines.Add('## Remaining risks')
     $lines.Add('')
     foreach ($risk in @($Response.risks)) {
         $lines.Add(('- {0}' -f $risk))
     }
     if (@($Response.risks).Count -eq 0) {
-        $lines.Add('- 暂无。')
+        $lines.Add('- None.')
     }
     $lines.Add('')
-    $lines.Add('## 交接给 verification-agent')
+    $lines.Add('## Handoff to verification-agent')
     $lines.Add('')
     $lines.Add(($Response.handoff_note))
 
@@ -603,11 +604,11 @@ if (-not $SkipDispatch) {
 
     & powershell @dispatchArgs
     if ($LASTEXITCODE -ne 0) {
-        throw "为 $ChangeId/$RepoId 准备 worker packet 失败。"
+        throw "Failed to prepare worker packet for $ChangeId/$RepoId."
     }
 }
 
-Write-Host ("已为 {0}/{1} 准备 worker packet：{2}" -f $ChangeId, $RepoId, $packetPath) -ForegroundColor Green
+Write-Host ("Prepared worker packet for {0}/{1}: {2}" -f $ChangeId, $RepoId, $packetPath) -ForegroundColor Green
 
 if ($PrintPacket) {
     Write-Host ''
@@ -621,13 +622,13 @@ if (-not $Execute) {
 $execution = Parse-HarnessExecutionConfig -YamlPath $executionPath
 $repoConfig = Get-HarnessRepoConfig | Where-Object { $_.id -eq $RepoId } | Select-Object -First 1
 if ($null -eq $repoConfig) {
-    throw "未找到仓库配置：$RepoId"
+    throw "Repository configuration not found: $RepoId"
 }
 
 $registryMap = Get-HarnessAgentRegistryMap
 $roleId = if ($execution.RegistryRef.ContainsKey($RepoId) -and -not [string]::IsNullOrWhiteSpace($execution.RegistryRef[$RepoId])) { $execution.RegistryRef[$RepoId] } else { $execution.RepoOwners[$RepoId] }
 if (-not $registryMap.ContainsKey($roleId)) {
-    throw "未找到角色配置：$roleId"
+    throw "Role configuration not found: $roleId"
 }
 $roleMeta = $registryMap[$roleId]
 $allowedPaths = if ($execution.WriteScopesBusiness.ContainsKey($RepoId)) { @($execution.WriteScopesBusiness[$RepoId]) } else { @() }
@@ -653,15 +654,15 @@ $dispatchBlockedReason = if (($null -ne $dispatchRepoItem) -and -not [string]::I
 
 if (-not $NoCodeChanges) {
     if (-not [string]::IsNullOrWhiteSpace($dispatchBlockedReason)) {
-        throw "当前派工已被 dispatcher 标记为 blocked：$dispatchBlockedReason"
+        throw "The dispatcher has marked this assignment as blocked: $dispatchBlockedReason"
     }
 
     if ($resolvedWorktreePath -eq $repoRootPath) {
-        throw "真实写代码模式禁止直接在主仓工作树执行：$RepoId。请先通过 dispatch-change/EnsureWorktrees 切到独立 worktree。"
+        throw "Actual code-editing mode cannot run directly in the main repository working tree: $RepoId. Use dispatch-change/EnsureWorktrees to switch to an isolated worktree first."
     }
 
     if (-not (Test-Path -LiteralPath $resolvedWorktreePath)) {
-        throw "未找到独立 worktree：$resolvedWorktreePath"
+        throw "Isolated worktree not found: $resolvedWorktreePath"
     }
 
     $trackedDirtyBeforeRun = @(Get-HarnessTrackedDirtyFiles -WorkingDirectory $resolvedWorktreePath)
@@ -669,16 +670,16 @@ if (-not $NoCodeChanges) {
     if ((@($trackedDirtyBeforeRun).Count -gt 0) -or (@($untrackedBeforeRun).Count -gt 0)) {
         $allowSnapshotDirty = ($snapshotPolicy -eq 'source_dirty_tracked')
         if (-not $allowSnapshotDirty) {
-            throw "当前 worktree 非干净状态，禁止作为真实写代码执行入口：$resolvedWorktreePath"
+            throw "The current worktree is dirty and cannot be used for actual code-editing execution: $resolvedWorktreePath"
         }
 
         if (@($untrackedBeforeRun).Count -gt 0) {
-            throw "当前 worktree 存在未跟踪文件，不能作为 source_dirty_tracked 入口：$($untrackedBeforeRun -join '、')"
+            throw "The current worktree contains untracked files and cannot be used for source_dirty_tracked: $($untrackedBeforeRun -join ', ')"
         }
 
         $unexpectedDirty = @($trackedDirtyBeforeRun | Where-Object { $_ -notin $snapshotTrackedFiles })
         if (@($unexpectedDirty).Count -gt 0) {
-            throw "当前 worktree 存在未登记到 snapshot 的脏文件：$($unexpectedDirty -join '、')"
+            throw "The current worktree contains dirty files not registered in the snapshot: $($unexpectedDirty -join ', ')"
         }
     }
 }
@@ -688,31 +689,31 @@ $scopedHashesBeforeRun = Get-HarnessFileHashSnapshot -WorkingDirectory $worktree
 
 $packetContent = Get-Content -LiteralPath $packetPath -Raw
 $promptLines = @(
-    "你是示例产品项目中的 repo worker，当前扮演角色 `$roleId`。",
-    "你正在本地 Harness Engineering V1 运行面中执行任务。",
-    "本次唯一目标是：严格按照 worker packet 和任务卡，在 write scope 内完成真实代码修改与本仓验证。",
-    "不要回答元问题、不要解释运行协议、不要复述规则；你必须优先查看目标文件并尝试完成任务卡定义的代码实现。",
-    "必须严格遵守：",
-    "1. 只允许在当前 worktree 内工作。",
-    "2. 只允许修改 packet 中列出的 write scope。",
-    "3. 不得修改控制仓文件，不得改写 verification/result.md。",
-    "4. 完成后必须运行本仓最小验证命令。",
-    "5. 最终只输出符合给定 JSON schema 的 JSON，不要附加额外解释。",
-    "6. 如果任务信息不足、write scope 不足、验证失败无法收敛，返回 status=blocked 或 status=failed。",
-    "7. 如果 packet 附带了最近 review 结果，且 review 指出了 write scope 内仍未修复的问题，这些 finding 就是本轮必修项。",
-    "8. 不得仅因目标文件已经有未提交改动就返回 `no_changes`；必须以 review finding 是否已经被当前文件内容消除为准。",
-    "9. 如果最近 review JSON 中存在 `needs_rework=true`，而对应 finding 仍落在当前 write scope 内，则本轮的默认目标就是修复这些 finding；除非你已经真的改完并能解释为什么当前文件内容已满足要求，否则不得返回 `no_changes`。",
-    "10. 在真实写代码模式下，只有当本轮确实产生了 write scope 内的代码变更时，才允许返回 `completed`。",
-    "11. 如果你返回的内容主要是在解释 harness、role、schema、packet 或执行规则，而没有进入目标文件修改与验证，这次执行视为失败。",
+    "You are a repository worker for the example product, acting as `$roleId`.",
+    "You are executing a task in the local Harness Engineering V1 runtime.",
+    "Your sole objective is to implement actual code changes and verify this repository within the write scope, following the worker packet and task card exactly.",
+    "Inspect the target files and attempt the implementation defined in the task card first. Do not answer meta-questions, explain the runtime protocol, or repeat the rules.",
+    "Follow these requirements strictly:",
+    "1. Work only in the current worktree.",
+    "2. Modify only the write scope listed in the packet.",
+    "3. Do not modify control-repository files or rewrite verification/result.md.",
+    "4. Run the repository's minimum verification commands when finished.",
+    "5. Return only JSON matching the provided JSON schema, without additional explanation.",
+    "6. If task information or write scope is insufficient, or verification failures cannot be resolved, return status=blocked or status=failed.",
+    "7. If the packet includes recent review results with unresolved findings inside the write scope, those findings must be fixed in this run.",
+    "8. Do not return `no_changes` merely because target files already have uncommitted edits. Check whether current file content resolves the review findings.",
+    "9. If the latest review JSON has `needs_rework=true` and the findings fall within the current write scope, fix those findings in this run. Do not return `no_changes` unless they have actually been resolved and you can explain why the current file content meets the requirements.",
+    "10. In actual code-editing mode, return `completed` only if this run produced code changes within the write scope.",
+    "11. This run fails if the response mainly explains the harness, role, schema, packet, or execution rules without modifying and verifying the target files.",
     ""
 )
 
 if ($NoCodeChanges) {
     $promptLines += @(
-        "当前是执行链烟测模式：",
-        "- 不允许修改任何仓库文件。",
-        "- 只允许阅读 packet、检查工作区、必要时运行只读命令。",
-        "- 最终返回 status=no_changes，并说明如果正式执行会怎么做。"
+        "This is an execution-workflow smoke test:",
+        "- Do not modify any repository files.",
+        "- Only read the packet, inspect the workspace, and run read-only commands if needed.",
+        "- Return status=no_changes and explain what a full execution would do."
     )
     $sandboxMode = 'read-only'
 } else {
@@ -721,7 +722,7 @@ if ($NoCodeChanges) {
 
 $promptLines += @(
     "",
-    "下面是本次 worker packet：",
+    "Worker packet for this run:",
     "",
     $packetContent
 )
@@ -804,20 +805,20 @@ $runtimeBlocked = $false
 if (($workerExitCode -ne 0) -and ($null -eq $parsedResponse)) {
     $existingRisks = @($normalizedResponse.risks)
     $runtimeMessage = if (Test-HarnessUsageLimitMessage -Text $rawResponse) {
-        'repo worker 未返回结构化结果，已捕获到外部 codex exec usage limit / 平台额度阻断。'
+        'The repository worker returned no structured result. An external codex exec usage limit or platform quota block was detected.'
     } else {
-        'repo worker 未返回结构化结果，疑似被外部 runtime / 平台执行层阻断。'
+        'The repository worker returned no structured result and may be blocked by the external runtime or platform execution layer.'
     }
     if ($runtimeMessage -notin $existingRisks) {
         $existingRisks += $runtimeMessage
     }
     $normalizedResponse.status = 'blocked'
     if (Test-HarnessUsageLimitMessage -Text $rawResponse) {
-        $normalizedResponse.summary = 'repo worker 未返回结构化 JSON，当前按外部 codex exec usage limit 阻断处理。'
-        $normalizedResponse.handoff_note = '请 verification-agent 将本轮记为外部 runtime 额度阻断；待额度/窗口恢复后重跑 repo worker。'
+        $normalizedResponse.summary = 'The repository worker returned no structured JSON. Treat this as an external codex exec usage limit block.'
+        $normalizedResponse.handoff_note = 'Have verification-agent record an external runtime quota block. Rerun the repository worker when the quota or execution window is available again.'
     } else {
-        $normalizedResponse.summary = 'repo worker 未返回结构化 JSON，当前按外部 runtime 阻断处理。'
-        $normalizedResponse.handoff_note = '请 verification-agent 将本轮记为外部运行资源阻断；待 runtime 恢复后重跑 repo worker。'
+        $normalizedResponse.summary = 'The repository worker returned no structured JSON. Treat this as an external runtime block.'
+        $normalizedResponse.handoff_note = 'Have verification-agent record an external runtime resource block. Rerun the repository worker when the runtime recovers.'
     }
     $normalizedResponse.risks = $existingRisks
     $runtimeBlocked = $true
@@ -838,17 +839,17 @@ if (@($actualWorkerChangedFiles).Count -gt 0) {
 }
 if (($normalizedResponse.status -eq 'failed') -and (Test-OutOfScopeRepoValidationDebt -Response $normalizedResponse -AllowedPaths $allowedPaths -ChangedFiles @($normalizedResponse.changed_files))) {
     $existingRisks = @($normalizedResponse.risks)
-    if ('仓库级验证被 write scope 外历史债阻断，当前应判定为 blocked 而非 failed。' -notin $existingRisks) {
-        $existingRisks += '仓库级验证被 write scope 外历史债阻断，当前应判定为 blocked 而非 failed。'
+    if ('Repository verification is blocked by pre-existing issues outside the write scope. Classify this run as blocked rather than failed.' -notin $existingRisks) {
+        $existingRisks += 'Repository verification is blocked by pre-existing issues outside the write scope. Classify this run as blocked rather than failed.'
     }
     $normalizedResponse.status = 'blocked'
     $normalizedResponse.risks = $existingRisks
-    $normalizedResponse.summary = "write scope 内实现与目标文件校验已完成，但仓库级验证仍被 write scope 外历史债阻断，按运行协议改判为 blocked。原摘要：$($normalizedResponse.summary)"
-    $normalizedResponse.handoff_note = '请 verification-agent 区分 write scope 内通过与 scope 外历史债阻断；本轮不应按 worker 实现失败处理。'
+    $normalizedResponse.summary = "Implementation and target-file checks within the write scope are complete, but repository verification is blocked by pre-existing issues outside that scope. Reclassified as blocked under the runtime protocol. Original summary: $($normalizedResponse.summary)"
+    $normalizedResponse.handoff_note = 'Have verification-agent distinguish passing checks within the write scope from pre-existing blockers outside it. This run should not be classified as a worker implementation failure.'
 }
 if (($normalizedResponse.status -eq 'completed') -and (@($normalizedResponse.changed_files).Count -gt 0)) {
-    $normalizedResponse.summary = "repo worker 已在 write scope 内完成实现收敛，wrapper 已补跑本仓最小验证命令并通过。当前核对到的变更文件：$((@($normalizedResponse.changed_files) -join '、'))。"
-    $normalizedResponse.handoff_note = "请 verification-agent 基于当前 changed_files、命令结果和实际文件内容继续做结构化审查；本轮主结论以 wrapper 回填后的 worker result 为准，不再沿用原始 raw_response 中的旧状态判断。"
+    $normalizedResponse.summary = "The repository worker completed implementation within the write scope, and the wrapper ran the missing minimum repository verification commands successfully. Confirmed changed files: $((@($normalizedResponse.changed_files) -join ', '))."
+    $normalizedResponse.handoff_note = "Have verification-agent continue the structured review using current changed_files, command results, and actual file content. Use the worker result updated by the wrapper as the authoritative conclusion, rather than the outdated status in the original raw_response."
 }
 if (
     (-not $NoCodeChanges) -and
@@ -856,22 +857,22 @@ if (
     (@($actualWorkerChangedFiles).Count -eq 0)
 ) {
     $existingRisks = @($normalizedResponse.risks)
-    if ('本轮未检测到 write scope 内新增代码变更，不能视为真实 no-hand-code 完成。' -notin $existingRisks) {
-        $existingRisks += '本轮未检测到 write scope 内新增代码变更，不能视为真实 no-hand-code 完成。'
+    if ('No new code changes were detected within the write scope in this run. It cannot count as an actual no-hand-code completion.' -notin $existingRisks) {
+        $existingRisks += 'No new code changes were detected within the write scope in this run. It cannot count as an actual no-hand-code completion.'
     }
     $normalizedResponse.status = 'blocked'
     $normalizedResponse.risks = $existingRisks
-    $normalizedResponse.summary = "当前 worktree 已带有 snapshot 基线，但本轮未检测到 repo worker 在 write scope 内产生新的文件内容变化，按运行协议改判为 blocked。原摘要：$($normalizedResponse.summary)"
-    $normalizedResponse.handoff_note = '请确认本轮是否真的需要代码变更；如果需要，则应继续退回 repo worker，而不是直接宣布完成。'
+    $normalizedResponse.summary = "The worktree contains the snapshot baseline, but no new file-content changes by the repository worker were detected within the write scope in this run. Reclassified as blocked under the runtime protocol. Original summary: $($normalizedResponse.summary)"
+    $normalizedResponse.handoff_note = 'Confirm whether this run actually requires code changes. If so, return it to the repository worker rather than declaring it complete.'
 }
 Write-HarnessJsonFile -Path $normalizedResponsePath -Data $normalizedResponse
 
 $workerResultMarkdown = Convert-WorkerResponseToMarkdown -CurrentChangeId $ChangeId -RepoId $RepoId -RepoName $repoConfig.name -RoleId $roleId -RuntimeType $roleMeta.runtime_type -Title $execution.Title -Response $normalizedResponse -PacketPath $packetPath -WorktreePath $worktreePath
 Write-HarnessTextFile -Path $workerResultPath -Content $workerResultMarkdown
 
-Write-Host ("worker 已执行：{0}/{1} -> {2}" -f $ChangeId, $RepoId, $workerResultPath) -ForegroundColor Green
+Write-Host ("Worker executed: {0}/{1} -> {2}" -f $ChangeId, $RepoId, $workerResultPath) -ForegroundColor Green
 Write-Host ("worker response: {0}" -f $normalizedResponsePath) -ForegroundColor Cyan
 
 if (($workerExitCode -ne 0) -and ($null -eq $parsedResponse) -and (-not $runtimeBlocked) -and ($normalizedResponse.status -eq 'failed')) {
-    throw "worker 执行失败：$ChangeId/$RepoId（exit code=$workerExitCode）"
+    throw "Worker execution failed: $ChangeId/$RepoId (exit code=$workerExitCode)"
 }

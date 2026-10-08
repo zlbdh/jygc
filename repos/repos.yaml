@@ -18,7 +18,7 @@ repos:
       - "mvn -q -pl services/example-service -am test"
       - "mvn -q -pl services/example-service -am -DskipTests package"
     status: baseline-ready
-    notes: "基线命令来自现有后端部署副本；真正执行前需先把仓库克隆到 local_path，并按目标微服务调整模块参数。"
+    notes: "Baseline commands come from an existing backend deployment copy. Before execution, clone the repository to local_path and adjust module parameters for the target microservice."
   - id: web-portal
     name: example-product-web-portal
     remote: "https://example.com/example-org/example-product-web-portal.git"
@@ -37,7 +37,7 @@ repos:
       - "npm run build:prod"
       - "npm run build:stage"
     status: baseline-ready
-    notes: "当前已知最小命令契约是 build；lint/typecheck 后续补齐。"
+    notes: "The currently known minimum command contract is build; lint/typecheck will be added later."
   - id: admin-web
     name: example-product-admin-web
     remote: "https://example.com/example-org/example-product-admin-web.git"
@@ -56,7 +56,7 @@ repos:
       - "npm run build:prod"
       - "npm run build:stage"
     status: baseline-ready
-    notes: "大平台管理端已确认具备标准 Vue/Vite build 脚本，可纳入本地基线。"
+    notes: "The platform administration portal has confirmed standard Vue/Vite build scripts and can be included in the local baseline."
   - id: mobile-a
     name: example-product-mobile-a
     remote: "https://example.com/example-org/example-product-mobile-a.git"
@@ -75,7 +75,7 @@ repos:
       - "npm run lint"
       - "npx expo --version"
     status: baseline-ready
-    notes: "企业端 App 当前本地阶段先以 lint + Expo 环境检查纳入主链路基线；Jest 契约测试仍存在历史接口路径与测试配置债，单列到下一波治理。"
+    notes: "At this local stage, the enterprise app enters the main baseline through lint and Expo environment checks. Jest contract tests still have pre-existing API-path and test-configuration issues, reserved for the next remediation cycle."
   - id: mobile-b
     name: example-product-mobile-b
     remote: "https://example.com/example-org/example-product-mobile-b.git"
@@ -95,7 +95,7 @@ repos:
       - "npm run test -- --watch=false"
       - "npx expo --version"
     status: baseline-ready
-    notes: "商家端 App 已确认具备 lint/test/start 脚本，首版按 React Native + Expo 基线纳入本地验证。"
+    notes: "The merchant app has confirmed lint/test/start scripts. The initial version includes it in local verification using the React Native + Expo baseline."
   - id: mobile-c
     name: example-product-mobile-c
     remote: "https://example.com/example-org/example-product-mobile-c.git"
@@ -114,7 +114,7 @@ repos:
       - "npm run typecheck"
       - "npx expo --version"
     status: missing-contract
-    notes: "当前仓只有需求文档和 README，尚未形成可执行 App 工程，暂不纳入命令级基线。"
+    notes: "This repository currently contains only requirements and a README, with no executable app project. It is excluded from the command-level baseline for now."
   - id: miniapp
     name: example-product-miniapp
     remote: "https://example.com/example-org/example-product-miniapp.git"
@@ -128,9 +128,9 @@ repos:
     bootstrap_command: "npm install --ignore-scripts"
     build_command: "npm run build"
     test_command: "npm run lint"
-    smoke_command: "微信开发者工具导入检查"
+    smoke_command: "Import check in WeChat DevTools"
     safe_check_commands:
       - "npm run build"
       - "npm run lint"
     status: missing-contract
-    notes: "当前仓以页面原型和技能脚手架为主，尚未形成标准小程序工程契约。"
+    notes: "This repository mainly contains page prototypes and skill scaffolding. A standard miniapp project contract has not yet been established."

@@ -1,27 +1,27 @@
-# MOB-001 企业端待办在 App 可见
+# MOB-001 Enterprise to-do items are visible in the app
 
-## 类型
+## Type
 
-- 文档型回归
-- 后续自动化：Maestro
+- Documented regression case
+- Planned automation: Maestro
 
-## 目标
+## Goals
 
-验证平台或企业后台产生的待办能在 `mobile-a` 中被正确查看。
+Verify that to-do items created by the platform or enterprise administration portal appear correctly in `mobile-a`.
 
-## 输入
+## Inputs
 
-- 企业后台或平台侧已产生一条与企业人员相关的待办
+- The enterprise administration portal or platform has created a to-do item for enterprise staff
 
-## 步骤
+## Steps
 
-1. 在后台触发待办产生
-2. 登录 `mobile-a`
-3. 进入待办列表
-4. 查看待办详情
+1. Trigger creation of a to-do item in the administration portal
+2. Sign in to `mobile-a`
+3. Open the to-do list
+4. View the to-do item details
 
-## 预期结果
+## Expected results
 
-- 待办可见
-- 标题、状态、时间、来源正确
-- 点击后可进入正确详情页或处理页
+- The to-do item is visible
+- The title, status, time, and source are correct
+- Selecting the item opens the correct details or processing page

@@ -37,7 +37,7 @@ if ($RepoIds -and $RepoIds.Count -gt 0) {
 }
 
 if ($repos.Count -eq 0) {
-    throw "没有匹配到任何待克隆仓库。"
+    throw "No repositories matched the clone request."
 }
 
 $results = @()
@@ -55,20 +55,20 @@ foreach ($repo in $repos) {
         $status = 'exists'
         $currentRemote = Get-HarnessGitOriginUrl -RepoPath $targetPath
         if ((Normalize-HarnessText $currentRemote) -ne (Normalize-HarnessText $repo.remote)) {
-            $note = "现有 origin 与配置不一致：$currentRemote"
+            $note = "The existing origin differs from the configuration: $currentRemote"
             $status = 'warning'
         } else {
-            $note = '仓库已存在，未覆盖本地内容。'
+            $note = 'The repository already exists. Local content was preserved.'
         }
     } elseif (Test-Path -LiteralPath $targetPath) {
         $action = 'blocked'
         $status = 'blocked'
-        $note = '目标目录已存在但不是 git 仓库，请人工处理后重试。'
+        $note = 'The target directory exists but is not a Git repository. Resolve it manually and try again.'
     } else {
         $action = 'clone'
         if ($DryRun) {
             $status = 'dry-run'
-            $note = "将克隆到 $targetPath"
+            $note = "Will clone to $targetPath"
         } else {
             Ensure-HarnessDirectory -Path $parentPath | Out-Null
             $targetBranch = [string]$repo.default_branch
@@ -87,9 +87,9 @@ foreach ($repo in $repos) {
             if ($cloneResult.ExitCode -eq 0) {
                 $status = 'cloned'
                 if ($targetBranch -eq [string]$repo.default_branch) {
-                    $note = '克隆成功。'
+                    $note = 'Clone succeeded.'
                 } else {
-                    $note = "克隆成功，已自动回退到远端默认分支 $targetBranch。"
+                    $note = "Clone succeeded; automatically fell back to the remote default branch $targetBranch."
                 }
                 if (-not [string]::IsNullOrWhiteSpace($AccessToken)) {
                     $null = Invoke-HarnessCommand -WorkingDirectory $targetPath -Command ("git remote set-url origin {0}" -f $repo.remote)

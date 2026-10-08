@@ -1,27 +1,27 @@
-# WEB-003 导出链路
+# WEB-003 Export workflow
 
-## 类型
+## Type
 
-- 文档型回归
-- 后续自动化：Playwright + API 联动
+- Documented regression case
+- Planned automation: Playwright with API integration
 
-## 目标
+## Goals
 
-验证企业端和平台端的导出链路遵循直链导出规范。
+Verify that enterprise and platform export workflows follow the direct-link export standard.
 
-## 输入
+## Inputs
 
-- 至少一个支持导出的列表页
+- At least one list page that supports export
 
-## 步骤
+## Steps
 
-1. 进入目标列表页
-2. 点击导出
-3. 观察请求路径和返回结果
-4. 验证下载/预览行为
+1. Open the target list page
+2. Select Export
+3. Inspect the request path and response
+4. Verify download and preview behavior
 
-## 预期结果
+## Expected results
 
-- 后端导出接口使用 `/export/url`
-- 前端通过统一导出工具处理
-- 无 `blob` / `URL.createObjectURL` 临时实现
+- The backend export endpoint uses `/export/url`
+- The frontend uses the shared export utility
+- No ad hoc `blob` / `URL.createObjectURL` implementation is used

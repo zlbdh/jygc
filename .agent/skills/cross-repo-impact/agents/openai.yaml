@@ -1,6 +1,6 @@
 interface:
-  display_name: "跨仓影响分析"
-  short_description: "分析七仓影响范围并生成结构化依赖与风险清单供实现前使用"
+  display_name: "Cross-repository impact analysis"
+  short_description: "Map repository impacts, dependencies, and risks"
   default_prompt: "Use $cross-repo-impact to generate or review impact.yaml for a example-product change."
 
 policy:

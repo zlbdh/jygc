@@ -1,27 +1,27 @@
 # {{CHANGE_ID}} - {{TITLE}}
 
-## 业务目标
+## Business goals
 
-- 
+-
 
-## 用户角色
+## User roles
 
-- 
+-
 
-## 成功标准
+## Success criteria
 
-- 
+-
 
-## 非目标
+## Non-goals
 
-- 
+-
 
-## 风险说明
+## Risk notes
 
-- 
+-
 
-## 关联背景
+## Related background
 
-- 来源需求：
-- 关联页面/接口：
-- 截止日期：
+- Source request:
+- Related pages/interfaces:
+- Due date:

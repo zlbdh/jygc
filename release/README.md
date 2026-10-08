@@ -1,19 +1,19 @@
-# 发布目录说明
+# Release records
 
-本目录用于保存发布单。
+This directory stores release records.
 
-命名建议：
+Recommended naming:
 
 ```text
 REL-YYYY-NNNN.md
 ```
 
-每个发布单应至少包含：
+Each release record must include at least:
 
-- 发布编号
-- 关联 `change-id`
-- 涉及仓库与分支
-- 数据库与配置变更
-- 发布顺序
-- 回滚说明
-- 发布后观察点
+- Release ID
+- Related `change-id`
+- Affected repositories and branches
+- Database and configuration changes
+- Release order
+- Rollback instructions
+- Post-release monitoring points

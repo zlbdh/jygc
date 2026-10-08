@@ -1,86 +1,85 @@
-# 记忆治理
+# Memory Governance
 
-## 1. 核心原则
+## 1. Core principles
 
-示例产品控制平面不建设“万能记忆库”。  
-当前阶段采用分层记忆治理：
+The example product control plane uses layered memory governance rather than a universal memory database:
 
-- 仓库产物是长期记忆
-- 线程和聊天记录是短期记忆
-- MCP 是外部只读上下文
-- Skills 是可复用执行配方
-- `reports/` 是验证证据
-- `postmortem.md` 是负面记忆和改进入口
+- Repository artifacts are long-term memory.
+- Threads and conversation history are short-term memory.
+- MCP provides external, read-only context.
+- Skills are reusable execution procedures.
+- `reports/` contains verification evidence.
+- `postmortem.md` records failures and initiates improvements.
 
-判断标准只有一个：**发布、验收和回放所需的事实，必须能在仓库里找到。**
+The criterion is simple: **facts needed for releases, acceptance, and reconstruction must be available in the repository.**
 
-## 2. 记忆分层
+## 2. Memory layers
 
-| 记忆层 | 事实源 | 当前问题 | 治理方式 |
-|------|--------|----------|---------|
-| 全局记忆 | `docs/`、`standards/`、`templates/`、`AGENTS.md` | 规则存在，但团队未必总是先读 | `AGENTS.md` 只做目录，事实必须落在仓库文件 |
-| 仓/模块记忆 | 业务仓 README、`.agent/rules`、示例代码 | 分散、不均衡、难路由 | 控制仓只做索引和路由，不复制业务事实 |
-| 变更记忆 | `changes/<change-id>/` | 结构已建，但尚未覆盖所有真实需求 | 每个需求必须完整沉淀全流程文件 |
-| 跨仓记忆 | `impact.yaml`、`docs/cross-repo/` | 依赖图和链路索引刚起步 | 统一维护链路索引、依赖图、契约索引 |
-| 验证记忆 | `reports/`、`verification/result.md` | 报告与业务验收容易混淆 | 报告只代表技术检查，验收必须回填变更单 |
-| 负面记忆 | `postmortem.md`、回归清单、规则更新 | 返工经验容易留在聊天里 | 每次事故或返工至少回灌一项改进 |
-| 外部上下文 | MCP、开发/测试系统 | 容易出现无来源事实 | 所有外部事实必须带来源与时间戳 |
+| Layer | Source of truth | Current problem | Governance approach |
+|-------|-----------------|-----------------|---------------------|
+| Global memory | `docs/`, `standards/`, `templates/`, `AGENTS.md` | Rules exist but are not always read first | Use `AGENTS.md` as an index; record facts in repository files |
+| Repository/module memory | Business-repository READMEs, `.agent/rules`, examples | Scattered, uneven, and difficult to locate | The control repository indexes and routes without copying business facts |
+| Change memory | `changes/<change-id>/` | Structure exists but does not yet cover all actual requests | Preserve complete lifecycle files for every request |
+| Cross-repository memory | `impact.yaml`, `docs/cross-repo/` | Dependency maps and workflow indexes are new | Maintain shared workflow, dependency, and contract indexes |
+| Verification memory | `reports/`, `verification/result.md` | Technical reports can be confused with business acceptance | Reports represent technical checks; record acceptance in the change record |
+| Failure memory | `postmortem.md`, regression lists, rule updates | Rework lessons can remain in conversations | Produce at least one improvement after each incident or rework cycle |
+| External context | MCP, development/test systems | Facts may lack provenance | Include sources and timestamps for all external facts |
 
-## 3. 哪些内容必须写回仓库
+## 3. What must be written back
 
-以下内容不能只留在线程或口头沟通中：
+Do not leave these items only in threads or verbal communication:
 
-- 需求目标与成功标准
-- 跨仓影响和依赖顺序
-- 执行 owner、写边界、branch、worktree、锁状态
-- 仓内验证结果与跨仓验收结果
-- 发布单与回滚步骤
-- 事故复盘和改进项
+- Request goals and success criteria
+- Cross-repository impact and dependency order
+- Execution owners, write boundaries, branches, worktrees, and locks
+- Repository verification and cross-repository acceptance results
+- Release records and rollback steps
+- Incident postmortems and improvements
 
-默认写回位置：
+Default destinations:
 
-- 需求：`brief.md`
-- 影响：`impact.yaml`
-- 执行状态：`execution.yaml`
-- 设计：`design.md`
-- 验收：`acceptance.md`
-- 验证：`verification/result.md`
-- 发布：`release/` 或发布模板实例
-- 复盘：`postmortem.md`
+- Requirements: `brief.md`
+- Impact: `impact.yaml`
+- Execution status: `execution.yaml`
+- Design: `design.md`
+- Acceptance: `acceptance.md`
+- Verification: `verification/result.md`
+- Release: `release/` or an instance of the release template
+- Postmortem: `postmortem.md`
 
-## 4. 哪些内容不应被当作系统事实
+## 4. What is not an authoritative system fact
 
-以下内容可以作为线索，但不能直接当作发布依据：
+These may provide leads, but cannot directly support release decisions:
 
-- 聊天记录里的口头结论
-- 没有来源和时间戳的截图
-- 没有对应 commit / branch 的“我本地测过”
-- 没有落盘的临时 Agent 推理
-- 没有落盘的 MCP 读取结果
+- Verbal conclusions in conversations
+- Screenshots without sources and timestamps
+- Claims of local testing without corresponding commits or branches
+- Temporary agent reasoning that was not saved
+- MCP results that were not saved
 
-## 5. `execution.yaml` 的职责
+## 5. Responsibilities of `execution.yaml`
 
-`execution.yaml` 是当前阶段最关键的机器可读记忆文件，用来记录：
+`execution.yaml` is the key machine-readable memory file at this stage. It records:
 
-- 当前阶段 `stage`
-- 当前阶段 owner `stage_owner`
-- 各 repo owner `repo_owners`
-- 写边界 `write_scopes`
-- 依赖 `depends_on`
-- 分支 `branch`
-- worktree `worktree`
-- 锁状态 `lock_state`
-- 快照时间 `snapshot_at`
+- Current stage: `stage`
+- Current stage owner: `stage_owner`
+- Repository owners: `repo_owners`
+- Write boundaries: `write_scopes`
+- Dependencies: `depends_on`
+- Branches: `branch`
+- Worktrees: `worktree`
+- Locks: `lock_state`
+- Snapshot time: `snapshot_at`
 
-它不是聊天摘要，而是并发执行和回放的事实表。
+It is the authoritative record for concurrent execution and reconstruction, rather than a conversation summary.
 
-## 6. v2 演进边界
+## 6. V2 evolution boundaries
 
-长期可以补：
+Future additions may include:
 
-- 长期线程存储
-- 自动索引
-- MCP 快照缓存
-- 线程与 PR、发布单、变更单自动关联
+- Persistent thread storage
+- Automated indexing
+- MCP snapshot caching
+- Automatic links between threads, PRs, releases, and change records
 
-但即使进入 v2，仓库产物仍然是最终事实源。
+Repository artifacts remain the final source of truth in V2 as well.

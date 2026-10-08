@@ -8,47 +8,47 @@ last_reviewed: 2026-03-31
 source_of_truth: control-repo
 ---
 
-# `mobile-a` 企业端 App 规则
+# `mobile-a` Enterprise app rules
 
-## 1. 适用范围
+## 1. Scope
 
-本规则适用于 `example-product-mobile-a`。
+These rules apply to `example-product-mobile-a`.
 
-## 2. 技术基线
+## 2. Technical baseline
 
 - React Native
 - Expo
 - TypeScript
 - React Navigation
 
-## 3. 业务定位
+## 3. Business purpose
 
-企业端 App 是企业平台的移动延伸，不是消费者端。
+The enterprise app extends the enterprise platform to mobile and serves enterprise users rather than consumers.
 
-优先承载：
+Prioritize:
 
-- 待办
-- 订单与工单概览
-- 客户与员工相关管理
-- 审批与通知
+- To-do items
+- Order and work-order overviews
+- Customer and employee management
+- Approvals and notifications
 
-## 4. 实现原则
+## 4. Implementation principles
 
-- 页面状态、接口字段优先与企业平台和后端保持一致
-- 不在页面内长期保留大量临时 Mock 逻辑
-- 重要数据通过显式的 service / api 封装对接
-- 待办和消息类链路要优先纳入回归用例
+- Keep page states and API fields consistent with the enterprise platform and backend
+- Do not retain extensive temporary mock logic in pages long term
+- Access important data through explicit service / API abstractions
+- Prioritize to-do and messaging workflows in regression coverage
 
-## 5. 最小验证要求
+## 5. Minimum verification requirements
 
 - `npm install`
-- `npm run typecheck`（待本地仓确认）
-- 关键流程预留 Maestro smoke 入口
+- `npm run typecheck` (confirm against the local repository)
+- Provide Maestro smoke-test entry points for critical workflows
 
-## 6. 当前限制
+## 6. Current limitations
 
-本仓首版只固化规则，不假设 `mobile-a` 当前已在本机完整落位。后续需要在真实仓到位后补充：
+This initial version documents rules without assuming `mobile-a` is fully available locally. Once the actual repository is available, add:
 
-- 导航结构映射
-- 真实命令契约
-- 移动端 smoke 脚本
+- Navigation structure mapping
+- Actual command contracts
+- Mobile smoke-test scripts

@@ -10,7 +10,7 @@ $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot '..\lib\HarnessRepoTools.ps1')
 
 if ([string]::IsNullOrWhiteSpace($ChangeId) -and [string]::IsNullOrWhiteSpace($Path)) {
-    throw "请传入 -ChangeId 或 -Path。"
+    throw "Provide -ChangeId or -Path."
 }
 
 $repoRoot = Get-HarnessRepoRoot
@@ -22,7 +22,7 @@ if (-not [string]::IsNullOrWhiteSpace($ChangeId)) {
 }
 
 if (-not (Test-Path -LiteralPath $targetDir)) {
-    throw "未找到变更目录：$targetDir"
+    throw "Change directory not found: $targetDir"
 }
 
 $requiredFiles = @(
@@ -39,13 +39,13 @@ $errors = New-Object System.Collections.Generic.List[string]
 foreach ($relativePath in $requiredFiles) {
     $fullPath = Join-Path $targetDir $relativePath
     if (-not (Test-Path -LiteralPath $fullPath)) {
-        $errors.Add("缺少文件：$relativePath")
+        $errors.Add("Missing file: $relativePath")
         continue
     }
 
     $content = Get-Content -LiteralPath $fullPath -Raw
     if ([string]::IsNullOrWhiteSpace($content)) {
-        $errors.Add("文件为空：$relativePath")
+        $errors.Add("Empty file: $relativePath")
     }
 }
 
@@ -71,34 +71,34 @@ if (Test-Path -LiteralPath $executionPath) {
 
     foreach ($key in $requiredExecutionKeys) {
         if ($executionContent -notmatch ("(?m)^\s*{0}\s*:" -f [regex]::Escape($key))) {
-            $errors.Add("execution.yaml 缺少字段：$key")
+            $errors.Add("execution.yaml is missing field: $key")
         }
     }
 
     if ([string]::IsNullOrWhiteSpace($execution.Stage)) {
-        $errors.Add('execution.yaml 缺少有效字段：stage')
+        $errors.Add('execution.yaml is missing a valid field: stage')
     }
 
     if ([string]::IsNullOrWhiteSpace($execution.StageOwner)) {
-        $errors.Add('execution.yaml 缺少有效字段：stage_owner')
+        $errors.Add('execution.yaml is missing a valid field: stage_owner')
     }
 
     if (-not $execution.RuntimeType.ContainsKey('control_repo')) {
-        $errors.Add('execution.yaml 缺少 runtime_type.control_repo')
+        $errors.Add('execution.yaml is missing runtime_type.control_repo')
     }
 
     if (-not $execution.RegistryRef.ContainsKey('control_repo')) {
-        $errors.Add('execution.yaml 缺少 registry_ref.control_repo')
+        $errors.Add('execution.yaml is missing registry_ref.control_repo')
     }
 }
 
 $tasksDir = Join-Path $targetDir 'tasks'
 if (-not (Test-Path -LiteralPath $tasksDir)) {
-    $errors.Add('缺少目录：tasks')
+    $errors.Add('Missing directory: tasks')
 } else {
     $taskFiles = @(Get-ChildItem -LiteralPath $tasksDir -Filter '*.md' -File -ErrorAction SilentlyContinue)
     if ($taskFiles.Count -eq 0) {
-        $errors.Add('未发现任何任务卡：tasks/*.md')
+        $errors.Add('No task cards found: tasks/*.md')
     }
 }
 
@@ -116,57 +116,57 @@ if (Test-Path -LiteralPath $impactPath) {
     foreach ($repoId in ($impactRepoIds | Select-Object -Unique)) {
         $taskPath = Join-Path $targetDir ("tasks\" + $repoId + '.md')
         if (-not (Test-Path -LiteralPath $taskPath)) {
-            $errors.Add("影响分析已声明仓库但缺少任务卡：tasks\$repoId.md")
+            $errors.Add("A repository is listed in the impact analysis but its task card is missing: tasks\$repoId.md")
             continue
         }
 
         $taskContent = Get-Content -LiteralPath $taskPath -Raw
         if ([string]::IsNullOrWhiteSpace($taskContent)) {
-            $errors.Add("任务卡为空：tasks\$repoId.md")
+            $errors.Add("Task card is empty: tasks\$repoId.md")
         }
 
         if ((Test-Path -LiteralPath $executionPath) -and ($executionContent -notmatch ("(?m)^\s*{0}\s*:" -f [regex]::Escape($repoId)))) {
-            $errors.Add("execution.yaml 未登记受影响仓：$repoId")
+            $errors.Add("Affected repository is not registered in execution.yaml: $repoId")
         }
 
         if (Test-Path -LiteralPath $executionPath) {
             if (-not $execution.RepoOwners.ContainsKey($repoId)) {
-                $errors.Add("execution.yaml 缺少 repo_owner：$repoId")
+                $errors.Add("execution.yaml is missing repo_owner: $repoId")
             }
             if (-not $execution.Branch.ContainsKey($repoId)) {
-                $errors.Add("execution.yaml 缺少 branch：$repoId")
+                $errors.Add("execution.yaml is missing branch: $repoId")
             }
             if (-not $execution.Worktree.ContainsKey($repoId)) {
-                $errors.Add("execution.yaml 缺少 worktree：$repoId")
+                $errors.Add("execution.yaml is missing worktree: $repoId")
             }
             if (-not $execution.RuntimeType.ContainsKey($repoId)) {
-                $errors.Add("execution.yaml 缺少 runtime_type：$repoId")
+                $errors.Add("execution.yaml is missing runtime_type: $repoId")
             }
             if (-not $execution.RegistryRef.ContainsKey($repoId)) {
-                $errors.Add("execution.yaml 缺少 registry_ref：$repoId")
+                $errors.Add("execution.yaml is missing registry_ref: $repoId")
             }
             if ((-not $execution.WorkerResult.ContainsKey($repoId)) -or [string]::IsNullOrWhiteSpace($execution.WorkerResult[$repoId])) {
-                $errors.Add("execution.yaml 缺少 worker_result：$repoId")
+                $errors.Add("execution.yaml is missing worker_result: $repoId")
             }
             if ((-not $execution.ReviewResult.ContainsKey($repoId)) -or [string]::IsNullOrWhiteSpace($execution.ReviewResult[$repoId])) {
-                $errors.Add("execution.yaml 缺少 review_result：$repoId")
+                $errors.Add("execution.yaml is missing review_result: $repoId")
             }
             if (-not $execution.WriteScopesBusiness.ContainsKey($repoId)) {
-                $errors.Add("execution.yaml 缺少 write_scope：$repoId")
+                $errors.Add("execution.yaml is missing write_scope: $repoId")
             }
             if (-not $execution.LockStateBusiness.ContainsKey($repoId)) {
-                $errors.Add("execution.yaml 缺少 lock_state：$repoId")
+                $errors.Add("execution.yaml is missing lock_state: $repoId")
             }
         }
     }
 }
 
 if ($errors.Count -gt 0) {
-    Write-Host "变更单校验失败：" -ForegroundColor Red
+    Write-Host "Change record validation failed: " -ForegroundColor Red
     foreach ($errorItem in $errors) {
         Write-Host "  - $errorItem" -ForegroundColor Red
     }
-    throw "变更单结构校验未通过。"
+    throw "Change record structure validation failed."
 }
 
-Write-Host "变更单结构校验通过：$targetDir" -ForegroundColor Green
+Write-Host "Change record structure validation passed: $targetDir" -ForegroundColor Green

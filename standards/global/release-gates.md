@@ -8,30 +8,30 @@ last_reviewed: 2026-03-31
 source_of_truth: control-repo
 ---
 
-# 发布门禁
+# Release gates
 
-## 1. 形成发布单前的最低条件
+## 1. Minimum prerequisites for a release record
 
-- 关联的业务仓 PR 已齐备
-- 变更单已完成验收
-- 配置、脚本、数据库影响已列出
-- 回滚步骤可执行
+- All related business-repository PRs are available
+- The change record has completed acceptance
+- Configuration, script, and database impacts are listed
+- Rollback steps are executable
 
-## 2. 发布单必须包含
+## 2. Required release record contents
 
-- 发布编号
-- 关联 `change-id`
-- 涉及仓库与分支/提交
-- 数据库变更
-- 配置变更
-- 发布顺序
-- 回滚步骤
-- 发布后观察点
+- Release ID
+- Related `change-id`
+- Affected repositories and branches/commits
+- Database changes
+- Configuration changes
+- Release order
+- Rollback steps
+- Post-release monitoring points
 
-## 3. 禁止发布的情况
+## 3. Release blockers
 
-- 影响仓未全部验证
-- 回滚步骤缺失
-- 关键接口或关键页面未验收
-- 只验证单仓未验证用户完整流程
-- 外部事实没有来源或时间戳
+- Not all affected repositories are verified
+- Rollback steps are missing
+- Critical interfaces or pages have not passed acceptance
+- Only individual repositories were checked; the complete user workflow was not verified
+- External facts lack sources or timestamps

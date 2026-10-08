@@ -1,51 +1,51 @@
-# Agent Harness 控制仓公开脱敏版
+# Agent Harness Control Repository — Sanitized Public Edition
 
-这是一个从本机真实多仓协作控制仓整理出的公开脱敏版，用来展示 Agent / Workflow / Skill / MCP 如何参与工程协作、任务派发、验证和证据沉淀。仓库中的项目名、组织名、远程地址、仓库角色和路径均已泛化为示例信息；真实业务仓代码、运行快照、截图、日志、报告和可识别业务资料未包含在内。
+This sanitized public edition is based on a real local control repository for collaboration across multiple repositories. It demonstrates how agents, workflows, skills, and MCP support engineering collaboration, task dispatch, verification, and evidence collection. Project names, organization names, remote URLs, repository roles, and paths have been generalized into examples. Actual business code, runtime snapshots, screenshots, logs, reports, and identifiable business information are excluded.
 
-`example-product-harness` 是示例产品 7 仓研发的控制平面。  
-它不承载业务主代码，而是统一承载 **需求受理、跨仓影响分析、任务拆解、本地基线、跨仓验收、发布治理和知识回灌**。
+`example-product-harness` is the development control plane for the example product's seven repositories.
+It coordinates **request intake, cross-repository impact analysis, task breakdown, local baselines, cross-repository acceptance, release governance, and knowledge feedback**. Business application code stays in its own repositories.
 
-当前纳入控制平面的业务仓有：
+The control plane currently covers these business repositories:
 
-- `example-product-backend`：后端微服务
-- `example-product-web-portal`：企业平台 PC 端
-- `example-product-admin-web`：示例产品大平台管理端
-- `example-product-mobile-a`：企业端移动 App
-- `example-product-mobile-b`：商家端 App
-- `example-product-mobile-c`：服务员端 App
-- `example-product-miniapp`：消费者小程序
+- `example-product-backend`: Backend microservices
+- `example-product-web-portal`: Enterprise desktop web portal
+- `example-product-admin-web`: Example product platform administration portal
+- `example-product-mobile-a`: Enterprise mobile app
+- `example-product-mobile-b`: Merchant app
+- `example-product-mobile-c`: Staff app
+- `example-product-miniapp`: Consumer miniapp
 
-## 仓库定位
+## Repository purpose
 
-- 统一管理跨仓需求的 `change-id`
-- 固化 Agent、Workflow、Skills、MCP 的控制平面设计
-- 提供 7 仓本地拉齐、契约发现和本地风险矩阵
-- 统一管理任务卡、验收记录、发布单和复盘记录
-- 让研发过程从“口头协作”升级为“结构化、可审计、可回放”
+- Manage change IDs for cross-repository requests in one place
+- Document the control-plane design for agents, workflows, skills, and MCP
+- Provide local synchronization, contract discovery, and a risk matrix for all seven repositories
+- Manage task cards, acceptance records, release records, and postmortems centrally
+- Make development collaboration structured, auditable, and reproducible
 
-## 当前成熟度快照
+## Current maturity snapshot
 
-- `backend`、`web-portal`、`admin-web`、`mobile-a`、`mobile-b`：当前主链路已进入本地基线 `L2 PASS`
-- `backend`、`mobile-a`、`mobile-b`：允许本地 `L1 WARN`，原因通常是未提交改动而不是命令链失败
-- `mobile-c`、`miniapp`：仍是 `missing-contract` 原型仓，暂不纳入 no-hand-code 主链路
-- 控制仓：知识层、本地验证层和 packet-based worker harness 已落位；live MCP、自动锁服务和长期线程服务待补齐
+- `backend`, `web-portal`, `admin-web`, `mobile-a`, `mobile-b`: The main workflow has reached local baseline status `L2 PASS`
+- `backend`, `mobile-a`, `mobile-b`: Local `L1 WARN` is allowed, usually because of uncommitted changes rather than command failures
+- `mobile-c`, `miniapp`: Remain prototype repositories with `missing-contract` status and are excluded from the main no-hand-code workflow for now
+- Control repository: the knowledge layer, local verification layer, and packet-based worker harness are in place. Live MCP, automated locking, and persistent thread services remain to be added
 
-## 关键文档
+## Key documents
 
-- [docs/harness-engineering.md](docs/harness-engineering.md)：什么是驾驭工程，以及它在示例产品里的准确含义
-- [docs/workflow.md](docs/workflow.md)：标准研发与发布全流程
-- [docs/agent-workflow-skill-mcp.md](docs/agent-workflow-skill-mcp.md)：当前与目标的 Agent / Workflow / Skill / MCP 清单
-- [docs/worker-harness-v1.md](docs/worker-harness-v1.md)：V1 本地 worker 调度、packet 和 review 运行面
-- [docs/official-harness-mapping.md](docs/official-harness-mapping.md)：官方 Harness Engineering 到示例产品当前项目的映射、差距与下一步
-- [docs/memory-governance.md](docs/memory-governance.md)：记忆分层、事实源和写回规则
-- [docs/rule-precedence.md](docs/rule-precedence.md)：规则优先级、冲突处理和元信息要求
-- [docs/harness-sop.md](docs/harness-sop.md)：示例产品“驾驭工程”标准 SOP
-- [docs/module-practical-template.md](docs/module-practical-template.md)：新增模块时的完整实战模板
-- [docs/architecture.md](docs/architecture.md)：控制平面与七仓协作架构
-- [docs/command-contract.md](docs/command-contract.md)：各仓最小命令契约
-- [docs/cross-repo/README.md](docs/cross-repo/README.md)：跨仓链路、依赖图与契约索引入口
+- [docs/harness-engineering.md](docs/harness-engineering.md): Harness engineering and its specific meaning for the example product
+- [docs/workflow.md](docs/workflow.md): The complete development and release workflow
+- [docs/agent-workflow-skill-mcp.md](docs/agent-workflow-skill-mcp.md): Current and target inventories of agents, workflows, skills, and MCP
+- [docs/worker-harness-v1.md](docs/worker-harness-v1.md): V1 local worker dispatch, packets, and review execution
+- [docs/official-harness-mapping.md](docs/official-harness-mapping.md): Mapping official harness engineering guidance to the example product, including gaps and next steps
+- [docs/memory-governance.md](docs/memory-governance.md): Memory layers, sources of truth, and writeback rules
+- [docs/rule-precedence.md](docs/rule-precedence.md): Rule precedence, conflict resolution, and metadata requirements
+- [docs/harness-sop.md](docs/harness-sop.md): Standard harness engineering procedure for the example product
+- [docs/module-practical-template.md](docs/module-practical-template.md): A complete practical template for adding a module
+- [docs/architecture.md](docs/architecture.md): Architecture of the control plane and seven-repository collaboration
+- [docs/command-contract.md](docs/command-contract.md): Minimum command contracts for each repository
+- [docs/cross-repo/README.md](docs/cross-repo/README.md): Entry point for cross-repository workflows, dependency maps, and contract indexes
 
-## 目录总览
+## Directory overview
 
 ```text
 .
@@ -63,50 +63,50 @@
 └── scripts/
 ```
 
-## 记忆与规则模型
+## Memory and rule model
 
-当前控制平面采用固定的分层模型：
+The control plane uses a defined layered model:
 
-- 仓库产物是**长期记忆**
-- 线程与聊天记录是**短期记忆**
-- MCP 是**外部只读上下文**
-- Skills 是**可复用执行配方**
-- Workflow 是**编排顺序**
-- 规则是**边界、门禁与冲突处理**
+- Repository artifacts provide **long-term memory**
+- Threads and conversations provide **short-term memory**
+- MCP provides **external, read-only context**
+- Skills provide **reusable execution procedures**
+- Workflows define **orchestration order**
+- Rules define **boundaries, gates, and conflict resolution**
 
-默认不建设“万能记忆库”，而是把事实沉淀到控制仓与业务仓各自的事实源里。
+Maintain facts in the respective sources of truth for the control repository and business repositories. A universal memory database is outside the default design.
 
-## 快速开始
+## Quick start
 
-1. 校验控制仓结构和业务仓清单：
+1. Validate the control-repository structure and business-repository inventory:
 
 ```powershell
 .\scripts\checks\validate-repos.ps1
 .\scripts\bootstrap\verify-workspace.ps1
 ```
 
-2. 干跑或执行 7 仓拉齐：
+2. Preview or execute synchronization of the seven repositories:
 
 ```powershell
 .\scripts\bootstrap\clone-repos.ps1 -DryRun
 .\scripts\bootstrap\sync-repos.ps1 -DryRun
 ```
 
-3. 发现各仓契约并输出基线报告：
+3. Discover repository contracts and generate baseline reports:
 
 ```powershell
 .\scripts\checks\discover-contracts.ps1
 .\scripts\checks\run-local-baseline.ps1
 ```
 
-4. 创建并校验一个新变更单：
+4. Create and validate a new change record:
 
 ```powershell
-.\scripts\bootstrap\init-change.ps1 -ChangeId CHG-2026-0001-bootstrap-harness -Title "初始化研发控制仓"
+.\scripts\bootstrap\init-change.ps1 -ChangeId CHG-2026-0001-bootstrap-harness -Title "Initialize the development control repository"
 .\scripts\checks\validate-change.ps1 -ChangeId CHG-2026-0001-bootstrap-harness
 ```
 
-5. 为某个变更生成本地 worker dispatch 包，并可做 no-hand-code 烟测：
+5. Generate a local worker dispatch packet for a change, with optional no-hand-code smoke testing:
 
 ```powershell
 .\scripts\orchestrator\dispatch-change.ps1 -ChangeId CHG-2026-0001-bootstrap-harness
@@ -116,36 +116,36 @@
 .\scripts\orchestrator\review-worker-output.ps1 -ChangeId CHG-2026-0001-bootstrap-harness -RepoIds backend -Execute -Ephemeral
 ```
 
-## 控制平面组件
+## Control-plane components
 
-- `repos/repos.yaml`：七仓定位与命令发现唯一事实源
-- `docs/`：全局概念、架构、流程、清单
-- `standards/`：全局门禁与分端规则
-- `templates/`：变更、设计、执行状态、验收、验证、发布、复盘模板
-- `.agent/skills/`：控制仓级流程型 skills
-- `mcp/`：只读、非生产的 MCP 蓝图与接入策略
-- `reports/`：本地验证与诊断输出
+- `repos/repos.yaml`: Single source of truth for the seven repository roles and command discovery
+- `docs/`: Global concepts, architecture, workflows, and inventories
+- `standards/`: Global gates and platform-specific rules
+- `templates/`: Templates for changes, designs, execution status, acceptance, verification, releases, and postmortems
+- `.agent/skills/`: Workflow skills for the control repository
+- `mcp/`: Read-only, nonproduction MCP blueprints and integration policies
+- `reports/`: Local verification and diagnostic output
 
-## 本地代码布局约定
+## Local code layout convention
 
-业务仓本地工作副本统一放在 `D:\workspace\agent-harness\repos\` 下，但默认不纳入控制仓版本控制。  
-业务仓元数据只认 [repos/repos.yaml](repos/repos.yaml)。
+Local working copies of business repositories belong under `D:\workspace\agent-harness\repos\` and are excluded from control-repository version control by default.
+[repos/repos.yaml](repos/repos.yaml) is the authoritative source for business-repository metadata.
 
-每个变更默认还会生成 [execution.yaml](templates/execution.yaml) 对应的实例，用来记录：
+Each change also creates an instance of [execution.yaml](templates/execution.yaml) to record:
 
-- 当前阶段
-- 当前阶段 owner
+- Current stage
+- Current stage owner
 - repo owner
-- 写入边界
+- Write boundaries
 - worktree / branch
-- 锁状态
-- 快照时间
+- Lock state
+- Snapshot time
 
-## 本地验证报告
+## Local verification reports
 
-本地拉齐、自检和基线验证结果统一输出到：
+Local synchronization, self-check, and baseline verification results are written to:
 
 - [reports/README.md](reports/README.md)
 - `D:\workspace\agent-harness\reports\local-validation\`
 
-这些报告是“先本地、后生产”的最低门禁，不是可选参考项。
+These reports are required minimum gates for local verification before any production work.

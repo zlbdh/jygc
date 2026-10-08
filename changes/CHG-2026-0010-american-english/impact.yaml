@@ -1,0 +1,12 @@
+change_id: CHG-2026-0010-american-english
+title: American English localization
+is_cross_repo: false
+affected_repos: []
+affected_interfaces: []
+affected_tables: []
+affected_configs: [default_authoring_language]
+dependency_order: []
+notes:
+  - The owner's explicit English instruction supersedes the previous Chinese language preference.
+  - Business repositories and production environments are outside this change.
+  - Only the control repository is affected; affected_repos lists business repositories.

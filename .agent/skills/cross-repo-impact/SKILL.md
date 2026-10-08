@@ -1,31 +1,31 @@
 ---
 name: cross-repo-impact
-description: 为示例产品多仓需求生成和校正 `impact.yaml`，识别受影响仓、模块、接口、表、配置和依赖顺序。Use when Codex needs to analyze whether a change touches `backend / web-portal / admin-web / mobile-a / mobile-b / mobile-c / miniapp` and produce a structured cross-repo impact record before implementation.
+description: Create or correct `impact.yaml` for example-product requests spanning multiple repositories, identifying affected repositories, modules, interfaces, tables, configurations, and dependency order. Use when Codex needs to analyze whether a change touches `backend / web-portal / admin-web / mobile-a / mobile-b / mobile-c / miniapp` and produce a structured cross-repo impact record before implementation.
 ---
 
 # Cross Repo Impact
 
 ## Overview
 
-把需求从“感觉会影响几个仓”整理成结构化 `impact.yaml`，并在需要时补充轻量设计要点。
+Document the request's repository impact in a structured `impact.yaml`, adding lightweight design notes when needed.
 
-## 执行步骤
+## Execution steps
 
-1. 读取 `brief.md`、`repos/repos.yaml`、`docs/architecture.md`、`docs/command-contract.md`。
-2. 判断影响的仓、模块、接口、表、配置和依赖顺序。
-3. 优先标出跨端状态同步、审核流、订单流、导出、幂等等高风险联动点。
-4. 如果需要，补一版轻量 `design.md` 草稿，但不要跳过 `impact.yaml`。
+1. Read `brief.md`, `repos/repos.yaml`, `docs/architecture.md`, and `docs/command-contract.md`.
+2. Identify affected repositories, modules, interfaces, tables, configurations, and dependency order.
+3. Highlight high-risk interactions such as cross-platform state synchronization, approvals, order flows, exports, and idempotency.
+4. Draft a lightweight `design.md` if needed, without skipping `impact.yaml`.
 
-## 输出要求
+## Output requirements
 
-- 优先更新 `impact.yaml`
-- 必须明确 `affected_repos` 和 `dependency_order`
-- 对不确定项使用 `待确认`，不要伪造事实
-- 不直接改业务仓代码
+- Update `impact.yaml` first
+- Explicitly specify `affected_repos` and `dependency_order`
+- Mark uncertain items as `Needs confirmation`; do not fabricate facts
+- Do not directly change business-repository code
 
-## 校验清单
+## Validation checklist
 
-- 是否覆盖所有受影响仓
-- 是否写明接口和配置影响
-- 是否识别发布顺序依赖
-- 是否显式记录跨端风险
+- Are all affected repositories covered?
+- Are interface and configuration impacts documented?
+- Are release-order dependencies identified?
+- Are cross-platform risks explicitly documented?

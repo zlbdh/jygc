@@ -1,30 +1,30 @@
 ---
 name: cross-repo-acceptance-recorder
-description: 按业务链路记录示例产品跨仓验收步骤、实际结果、异常点和遗留风险，补全 `acceptance.md` 与 `verification/result.md`。Use when Codex needs to capture acceptance evidence for a multi-repo change rather than relying on single-repo build results.
+description: Record cross-repository acceptance steps, actual results, anomalies, and remaining risks by business workflow, completing `acceptance.md` and `verification/result.md`. Use when Codex needs to capture acceptance evidence for a multi-repo change rather than relying on single-repo build results.
 ---
 
 # Cross Repo Acceptance Recorder
 
 ## Overview
 
-把“已经联调过了”变成结构化验收记录，确保验收单位是业务链路，不是单仓通过。
+Document integration testing as structured acceptance evidence. Evaluate complete business workflows rather than individual repository results.
 
-## 执行步骤
+## Execution steps
 
-1. 读取 `acceptance.md`、`impact.yaml`、`design.md` 和 `verification/result.md`。
-2. 按用户流程逐步记录操作、预期结果、实际结果和异常点。
-3. 优先覆盖审核流、状态同步、订单流、导出、幂等等关键链路。
-4. 把遗留风险写进 `verification/result.md`，不要藏在聊天记录里。
+1. Read `acceptance.md`, `impact.yaml`, `design.md`, and `verification/result.md`.
+2. Record actions, expected results, actual results, and anomalies step by step along the user workflow.
+3. Prioritize approval flows, state synchronization, order flows, exports, idempotency, and other critical workflows.
+4. Record remaining risks in `verification/result.md` rather than leaving them in conversation history.
 
-## 输出要求
+## Output requirements
 
-- 优先更新 `acceptance.md`
-- 同步更新 `verification/result.md`
-- 结论只基于实际执行证据
-- 不因为单仓绿灯就宣布跨仓需求完成
+- Update `acceptance.md` first
+- Also update `verification/result.md`
+- Base conclusions only on evidence from actual execution
+- Do not declare a cross-repository request complete because one repository passes
 
-## 校验清单
+## Validation checklist
 
-- 是否按业务链路记录
-- 是否写明预期结果和实际结果
-- 是否显式记录遗留风险
+- Is evidence organized by business workflow?
+- Are expected and actual results documented?
+- Are remaining risks explicitly documented?

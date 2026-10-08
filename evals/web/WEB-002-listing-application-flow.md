@@ -1,29 +1,29 @@
-# WEB-002 商品/服务上架申请链路
+# WEB-002 Product/service listing application workflow
 
-## 类型
+## Type
 
-- 文档型回归
-- 后续自动化：Playwright
+- Documented regression case
+- Planned automation: Playwright
 
-## 目标
+## Goals
 
-验证企业端提交上架申请到平台端审核的完整流。
+Verify the complete workflow from an enterprise listing application to platform approval.
 
-## 输入
+## Inputs
 
-- 企业端存在可提交的平台服务或商品
-- 平台端存在对应审核入口
+- The enterprise portal has a service or product eligible for submission to the platform
+- The platform has the corresponding approval entry point
 
-## 步骤
+## Steps
 
-1. 在 `web-portal` 发起上架申请
-2. 检查 `backend` 是否产生申请记录
-3. 在 `admin-web` 查看待审核项
-4. 执行通过或驳回
-5. 回到 `web-portal` 查看结果
+1. Submit a listing application in `web-portal`
+2. Check whether `backend` creates an application record
+3. View pending approvals in `admin-web`
+4. Approve or reject the application
+5. Return to `web-portal` to view the result
 
-## 预期结果
+## Expected results
 
-- 申请数据完整到达平台端
-- 审核结果回流企业端
-- 驳回原因可见
+- Complete application data reaches the platform
+- The approval result returns to the enterprise portal
+- The rejection reason is visible

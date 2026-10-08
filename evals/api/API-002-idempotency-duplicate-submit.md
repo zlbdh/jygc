@@ -1,26 +1,26 @@
-# API-002 重复提交 / 幂等链路
+# API-002 Duplicate submission / idempotency workflow
 
-## 类型
+## Type
 
-- 文档型回归
-- 后续自动化：接口 smoke
+- Documented regression case
+- Planned automation: API smoke tests
 
-## 目标
+## Goals
 
-验证关键新增、审核、MQ 消费、状态变更场景具备幂等保护。
+Verify idempotency protection for critical creation, approval, message-consumption, and state-change scenarios.
 
-## 输入
+## Inputs
 
-- 一个会写入关键业务状态的接口或消费逻辑
+- An API or message consumer that writes critical business state
 
-## 步骤
+## Steps
 
-1. 连续发送两次相同请求或重复投递同一消息
-2. 检查数据库结果
-3. 检查业务日志和返回结果
+1. Send the same request twice in succession or deliver the same message twice
+2. Inspect the database results
+3. Inspect business logs and returned results
 
-## 预期结果
+## Expected results
 
-- 不产生重复业务数据
-- 返回结果可解释
-- Redis key、唯一校验或锁逻辑有效
+- No duplicate business data is created
+- Returned results are explainable
+- Redis keys, uniqueness checks, or locking logic work correctly

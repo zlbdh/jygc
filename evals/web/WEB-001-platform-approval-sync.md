@@ -1,32 +1,32 @@
-# WEB-001 平台审核通过后企业侧状态同步
+# WEB-001 Enterprise state synchronization after platform approval
 
-## 类型
+## Type
 
-- 文档型回归
-- 后续自动化：Playwright
+- Documented regression case
+- Planned automation: Playwright
 
-## 目标
+## Goals
 
-验证 `admin-web -> backend -> web-portal` 的审核同步链路是否完整。
+Verify the complete approval synchronization workflow across `admin-web -> backend -> web-portal`.
 
-## 输入
+## Inputs
 
-- 平台端存在一个待审核的企业入驻、服务上架或商品上架记录
-- 企业端有对应详情页或状态列表
+- The platform has an enterprise onboarding, service listing, or product listing record awaiting approval
+- The enterprise portal has a corresponding details page or status list
 
-## 步骤
+## Steps
 
-1. 在 `admin-web` 完成审核通过
-2. 观察 `backend` 是否完成状态变更和同步
-3. 登录 `web-portal` 查看企业端状态展示
+1. Approve the record in `admin-web`
+2. Check whether `backend` completes the state change and synchronization
+3. Sign in to `web-portal` and inspect the enterprise-side status display
 
-## 预期结果
+## Expected results
 
-- 平台端审核状态正确落库
-- 后端同步链路无异常
-- 企业端状态、时间、处理结果一致
+- The platform approval status is persisted correctly
+- Backend synchronization completes without errors
+- The enterprise-side status, time, and processing result are consistent
 
-## 风险点
+## Risks
 
-- 平台状态枚举与企业端状态枚举不一致
-- 审核备注未同步
+- Platform and enterprise status enums may differ
+- Approval notes may fail to synchronize

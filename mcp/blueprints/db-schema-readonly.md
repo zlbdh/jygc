@@ -1,25 +1,25 @@
 # db-schema-readonly
 
-## 目标
+## Goals
 
-为 `backend` 相关需求提供只读表结构、字段、索引和关系查询能力。
+Provide read-only queries of table structures, fields, indexes, and relationships for `backend` requests.
 
-## 允许能力
+## Allowed capabilities
 
-- 查看库、表、字段
-- 查看索引和约束
-- 查看建表语句
-- 查看表注释和字段注释
+- Inspect databases, tables, and fields
+- Inspect indexes and constraints
+- View table creation statements
+- View table and field comments
 
-## 禁止能力
+## Prohibited capabilities
 
-- 执行 DDL
-- 执行 DML
-- 执行迁移脚本
-- 连接生产库
+- Executing DDL
+- Executing DML
+- Executing migration scripts
+- Connecting to production databases
 
-## 适用场景
+## Use cases
 
-- 生成 `impact.yaml`
-- 校验接口变更是否涉及表结构
-- 做导出、幂等、账单类需求的影响分析
+- Creating `impact.yaml`
+- Checking whether interface changes affect table structures
+- Analyzing the impact of export, idempotency, and billing requests

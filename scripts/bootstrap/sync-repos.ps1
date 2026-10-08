@@ -17,7 +17,7 @@ if ($RepoIds -and $RepoIds.Count -gt 0) {
 }
 
 if ($repos.Count -eq 0) {
-    throw "没有匹配到任何待同步仓库。"
+    throw "No repositories matched the synchronization request."
 }
 
 $results = @()
@@ -31,7 +31,7 @@ foreach ($repo in $repos) {
             branch = ''
             dirty = ''
             remote_ok = $false
-            note = '本地仓库不存在，无法同步。'
+            note = 'The local repository does not exist and cannot be synchronized.'
         }
         continue
     }
@@ -62,7 +62,7 @@ foreach ($repo in $repos) {
                 $note = $fetchResult.Output
             } else {
                 $status = 'fetched'
-                $note = '已完成 fetch --all --prune。'
+                $note = 'Completed fetch --all --prune.'
             }
         } finally {
             if ($fetchRemoteWasChanged) {
@@ -71,7 +71,7 @@ foreach ($repo in $repos) {
         }
     } else {
         $status = 'dry-run'
-        $note = '将执行 git fetch --all --prune。'
+        $note = 'Will run git fetch --all --prune.'
     }
 
     $results += [pscustomobject]@{

@@ -1,15 +1,15 @@
-# 本地验证报告目录
+# Local verification report directory
 
-本目录用于保存本地化拉齐与安全验证产生的报告。
+This directory stores reports from local workspace synchronization and safety verification.
 
-## 目录约定
+## Directory conventions
 
-- `local-validation/`：每次本地基线验证的 Markdown 摘要和 JSON 矩阵
+- `local-validation/`: Markdown summaries and JSON matrices for each local baseline verification run
 
-## 文件类型
+## File types
 
-- `*-summary.md`：给人读的摘要报告
-- `*-matrix.json`：给脚本和后续自动化读取的结构化报告
-- `*-contracts.md` / `*-contracts.json`：契约发现报告
+- `*-summary.md`: Human-readable summary report
+- `*-matrix.json`: Structured report for scripts and subsequent automation
+- `*-contracts.md` / `*-contracts.json`: Contract discovery reports
 
-报告属于运行产物，不作为长期版本资产；仓库只保留目录和说明文件。
+Reports are runtime output rather than long-term versioned assets. Only the directory structure and documentation are retained in the repository.

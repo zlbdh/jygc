@@ -1,39 +1,39 @@
-# {{CHANGE_ID}} / {{REPO_ID}} Worker 执行结果
+# {{CHANGE_ID}} / {{REPO_ID}} Worker execution results
 
 ## Runtime
 
-- 变更标题：{{TITLE}}
-- 仓库：`{{REPO_NAME}}`
-- 仓库 ID：`{{REPO_ID}}`
-- 角色：`{{ROLE_ID}}`
-- runtime_type：`{{RUNTIME_TYPE}}`
-- 当前状态：待执行
+- Change title: {{TITLE}}
+- Repository: `{{REPO_NAME}}`
+- Repository ID: `{{REPO_ID}}`
+- Role: `{{ROLE_ID}}`
+- runtime_type: `{{RUNTIME_TYPE}}`
+- Current status: Pending execution
 
-## 输入快照
+## Input snapshots
 
 - `brief.md`
 - `impact.yaml`
 - `execution.yaml`
 - `tasks/{{REPO_ID}}.md`
 
-## 修改摘要
+## Change summary
 
-- 
+-
 
-## 命令执行结果
+## Command execution results
 
-| 命令 | ExitCode | 摘要 |
+| Command | ExitCode | Summary |
 |------|----------|------|
 |  |  |  |
 
-## 涉及文件
+## Affected files
 
-- 
+-
 
-## 遗留风险
+## Remaining risks
 
-- 
+-
 
-## 交接给 verification-agent
+## Handoff to verification-agent
 
-- 请基于本文件、git diff、基线报告和 `acceptance.md` 汇总 `verification/result.md`
+- Consolidate `verification/result.md` using this file, git diff, baseline reports, and `acceptance.md`

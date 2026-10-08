@@ -1,37 +1,37 @@
-# {{CHANGE_ID}} 设计说明
+# {{CHANGE_ID}} Design notes
 
-## 目标
+## Goals
 
 - {{TITLE}}
 
-## 业务链路
+## Business workflows
 
-- 
+-
 
-## 数据流 / 状态流
+## Data flow / state flow
 
-- 
+-
 
-## 接口与数据变更
+## Interface and data changes
 
-- 
+-
 
-## 跨仓依赖顺序
+## Cross-repository dependency order
 
-- 
+-
 
-## 失败处理
+## Failure handling
 
-- 
+-
 
-## 兼容策略
+## Compatibility strategy
 
-- 
+-
 
-## 发布与回滚考虑
+## Release and rollback considerations
 
-- 
+-
 
-## 待确认
+## Needs confirmation
 
-- 
+-

@@ -1,23 +1,23 @@
 # api-contract-readonly
 
-## 目标
+## Goals
 
-统一暴露 `backend` 与各端协作所需的接口契约、字段说明和样例。
+Provide a shared view of API contracts, field descriptions, and examples needed for collaboration between `backend` and other platforms.
 
-## 允许能力
+## Allowed capabilities
 
-- 读取 OpenAPI / Postman / JSON Schema
-- 查看请求参数、响应字段、错误码
-- 查看接口样例
+- Read OpenAPI / Postman / JSON Schema
+- Inspect request parameters, response fields, and error codes
+- View API examples
 
-## 禁止能力
+## Prohibited capabilities
 
-- 发起写操作接口调用
-- 修改接口定义
-- 连接生产网关
+- Calling APIs that perform writes
+- Modifying API definitions
+- Connecting to production gateways
 
-## 适用场景
+## Use cases
 
-- 生成 `brief.md` 和 `impact.yaml`
-- 拆 `web-portal / admin-web / mobile-a / mobile-b` 任务卡
-- 对照接口契约做跨仓验收
+- Creating `brief.md` and `impact.yaml`
+- Preparing task cards for `web-portal / admin-web / mobile-a / mobile-b`
+- Checking cross-repository acceptance against API contracts

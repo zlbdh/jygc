@@ -1,24 +1,24 @@
 # observability-readonly
 
-## 目标
+## Goals
 
-为发布后观察、联调问题定位和基线复核提供只读日志、报错和 trace 能力。
+Provide read-only logs, errors, and traces for post-release monitoring, integration diagnosis, and baseline review.
 
-## 允许能力
+## Allowed capabilities
 
-- 查询开发或测试环境日志
-- 查询错误事件
-- 查看接口调用链路和 trace
-- 查看关键指标快照
+- Query development or test logs
+- Query error events
+- Inspect API call chains and traces
+- View key metric snapshots
 
-## 禁止能力
+## Prohibited capabilities
 
-- 清理日志
-- 修改告警
-- 操作生产观测系统
+- Deleting logs
+- Modifying alerts
+- Operating production observability systems
 
-## 适用场景
+## Use cases
 
-- 发布后观察
-- 复盘事故和返工
-- 验收失败时做归因定位
+- Post-release monitoring
+- Reviewing incidents and rework
+- Diagnosing causes of acceptance failures

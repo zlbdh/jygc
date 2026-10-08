@@ -1,32 +1,32 @@
-# {{CHANGE_ID}} 验证结果
+# {{CHANGE_ID}} Verification results
 
-## 执行摘要
+## Execution summary
 
-- 变更标题：{{TITLE}}
-- 当前状态：待验证
-- 快照来源：
-- 快照时间：
+- Change title: {{TITLE}}
+- Current status: Pending verification
+- Snapshot source:
+- Snapshot time:
 
-## 仓内验证结果
+## Repository verification results
 
-| 仓库 | 执行命令 | 结果 | 备注 |
+| Repository | Command | Result | Notes |
 |------|----------|------|------|
 |  |  |  |  |
 
-## 跨仓验收结果
+## Cross-repository acceptance results
 
-| 步骤 | 验收项 | 结果 | 备注 |
+| Step | Acceptance item | Result | Notes |
 |------|--------|------|------|
 | 1 |  |  |  |
 
-## 失败项
+## Failures
 
-- 
+-
 
-## 遗留风险
+## Remaining risks
 
-- 
+-
 
-## 后续动作
+## Next actions
 
-- 
+-

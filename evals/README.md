@@ -1,24 +1,24 @@
-# 黄金回归集说明
+# Golden regression suite
 
-本目录用于沉淀跨仓高价值回归用例，首版采用“文档型回归 + 自动化规划位”并行方式。
+This directory stores high-value cross-repository regression cases. The initial version combines documented regression cases with reserved plans for automation.
 
-## 目录约定
+## Directory conventions
 
-- `web/`：Web 端回归，优先 Playwright
-- `api/`：后端接口与关键链路 smoke
-- `mobile/`：移动端回归，优先 Maestro
+- `web/`: Web regression tests, preferably Playwright
+- `api/`: Backend API and critical-workflow smoke tests
+- `mobile/`: Mobile regression tests, preferably Maestro
 
-## 首批黄金链路
+## Initial golden workflows
 
-1. 平台审核通过后企业侧状态同步
-2. 商品/服务上架申请链路
-3. 平台订单路由到企业
-4. 企业端待办在 App 可见
-5. 导出链路
-6. 重复提交 / 幂等链路
+1. Enterprise state synchronization after platform approval
+2. Product/service listing application workflow
+3. Routing platform orders to enterprises
+4. Enterprise to-do items are visible in the app
+5. Export workflow
+6. Duplicate submission / idempotency workflow
 
-## 当前状态说明
+## Current status
 
-- 首版允许只有目录和用例清单
-- 每条用例必须写清输入、步骤、预期结果
-- 后续自动化脚本要直接挂靠到这些用例，不再另起一套命名
+- The initial version may contain only directories and a case inventory
+- Each case must specify inputs, steps, and expected results
+- Attach future automation scripts directly to these cases using the same naming scheme

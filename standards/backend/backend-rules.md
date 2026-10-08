@@ -8,22 +8,22 @@ last_reviewed: 2026-03-31
 source_of_truth: control-repo
 ---
 
-# `backend` 后端规则
+# `backend` Backend rules
 
-## 1. 适用范围
+## 1. Scope
 
-本规则适用于 `example-product-backend`。
+These rules apply to `example-product-backend`.
 
-## 2. 技术基线
+## 2. Technical baseline
 
-- Spring Cloud 示例工程
+- Spring Cloud example project
 - Spring Boot + Spring Cloud Alibaba
 - MyBatis Plus
 - Redis / RabbitMQ / Seata
 
-## 3. 结构约束
+## 3. Structural constraints
 
-优先遵循既有分层：
+Follow the existing layers:
 
 - `controller`
 - `service`
@@ -31,24 +31,24 @@ source_of_truth: control-repo
 - `xml`
 - `domain/dto/vo`
 
-## 4. 业务实现关注点
+## 4. Business implementation considerations
 
-- 订单、支付、退款、审核等关键状态流要显式处理幂等
-- 导出优先复用现有 `/export/url` 直链模式
-- 跨服务强一致场景要判断是否需要 Seata
-- MQ 消费逻辑要带幂等与失败处理
+- Explicitly handle idempotency in critical state flows such as orders, payments, refunds, and approvals
+- Prefer the existing `/export/url` direct-link pattern for exports
+- Evaluate whether Seata is needed for cross-service strong consistency
+- Message-queue consumers must include idempotency and failure handling
 
-## 5. 最小验证要求
+## 5. Minimum verification requirements
 
-- 至少跑目标模块级 Maven 构建或测试
-- 涉及接口变更时，补接口 smoke 或针对性单测
-- 涉及导出、幂等、MQ、状态流时，不能只跑编译
+- Run at least a Maven build or test for the target module
+- Add API smoke tests or targeted unit tests for interface changes
+- Compilation alone is insufficient for exports, idempotency, message queues, or state-flow changes
 
-## 6. 文档回填要求
+## 6. Documentation writeback requirements
 
-以下情况必须回填到控制仓：
+Write the following changes back to the control repository:
 
-- 新增接口
-- 新增数据库表或字段
-- 状态流变化
-- 关键中间件决策
+- New interfaces
+- New database tables or fields
+- State-flow changes
+- Key middleware decisions
