@@ -38,4 +38,4 @@ lock_state:
 {{LOCK_STATES}}
 snapshot_at: ""
 notes:
-  - "Update owner and lock_state before changing ownership of a file during execution."
+  - "Before modifying the same file during execution, update owner and lock_state."
